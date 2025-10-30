@@ -15,13 +15,12 @@ CREATE TABLE reviewer.movie (
 );
 
 CREATE TABLE reviewer.movie_crew_bridge (
-    movie_id INTEGER NOT NULL REFERENCES movie(id),
-    crew_id INTEGER NOT NULL REFERENCES crew(id),
+    movie_id INTEGER NOT NULL REFERENCES movie(id) ON DELETE CASCADE,
+    crew_id INTEGER NOT NULL REFERENCES crew(id) ON DELETE CASCADE,
     position TEXT NOT NULL
-
 );
 
 CREATE TABLE reviewer.movie_genre_bridge (
-    movie_id INTEGER NOT NULL REFERENCES movie(id),
-    genre_id INTEGER NOT NULL REFERENCES genre(id)
+    movie_id INTEGER NOT NULL REFERENCES movie(id) ON DELETE CASCADE,
+    genre_id INTEGER NOT NULL REFERENCES genre(id) ON DELETE CASCADE
 );
