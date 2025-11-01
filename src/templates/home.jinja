@@ -1,9 +1,10 @@
 {% extends "base.jinja" %}
 {% block body %}
 <ul>
-    {% for id, name, release_year in movies %}
+    <h1>Movies</h1>
+    {% for movie_id, name, release_year in movies %}
     <li>
-        <a href="{{ url_for('get_movie', id=id|e) }}">{{ name|e }} ({{ release_year|e }})</a>
+        <a href="{{ url_for('get_movie', movie_id=movie_id|e) }}">{{ name|e }} ({{ release_year|e }})</a>
     </li>
     {% endfor %}
 </ul>
