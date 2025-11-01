@@ -27,33 +27,36 @@ async def get_movie(request: Request, movie_id: int):
     with psycopg.connect(database_url) as conn:
         with conn.cursor() as cur:
             cur.execute('''
-                            SELECT name, release_date
+                            SELECT name, TO_CHAR(release_date, 'DD Mon YYYY')
                             FROM reviewer.movie
                             WHERE movie_id = %s
                         ''', (movie_id,))
             movie_details = cur.fetchone()
+            print(movie_details)
 
             cur.execute('''
-                            SELECT mw.position, w.name
+                            SELECT w.worker_id, mw.position, w.name
                             FROM reviewer.movie m
                             JOIN reviewer.movie_worker_bridge mw ON m.movie_id = mw.movie_id
                             JOIN reviewer.worker w ON mw.worker_id = w.worker_id
                             WHERE m.movie_id = %s
+                            ORDER BY mw.position, w.name
                         ''', (movie_id,))
             workers = cur.fetchall()
 
             cur.execute('''
-                            SELECT g.name
+                            SELECT g.genre_id, g.name
                             FROM reviewer.movie m
                             JOIN reviewer.movie_genre_bridge mg ON m.movie_id = mg.movie_id
                             JOIN reviewer.genre g ON mg.genre_id = g.genre_id
                             WHERE m.movie_id = %s
+                            ORDER BY g.name
                         ''', (movie_id,))
             genres = cur.fetchall()
     return templates.TemplateResponse(request=request, name="movie.jinja", context={"movie_details": movie_details, "workers": workers, "genres": genres})
 
 @app.get("/worker/{worker_id}", response_class=HTMLResponse)
-async def get_worker_member(request: Request, worker_id: int):
+async def get_worker(request: Request, worker_id: int):
     with psycopg.connect(database_url) as conn:
         with conn.cursor() as cur:
             cur.execute('''
@@ -64,7 +67,7 @@ async def get_worker_member(request: Request, worker_id: int):
             worker_details = cur.fetchone()
 
             cur.execute('''
-                            SELECT m.movie_id, m.name, EXTRACT(year FROM m.release_date) AS release_year, STRING_AGG(mw.position, '/') as positions
+                            SELECT m.movie_id, m.name, EXTRACT(year FROM m.release_date) AS release_year, STRING_AGG(mw.position, '/' ORDER BY mw.position) as positions
                             FROM reviewer.movie m
                             JOIN reviewer.movie_worker_bridge mw ON m.movie_id = mw.movie_id
                             JOIN reviewer.worker w ON mw.worker_id = w.worker_id

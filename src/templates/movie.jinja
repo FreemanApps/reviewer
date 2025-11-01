@@ -1,7 +1,22 @@
 {% extends "base.jinja" %}
 {% block body %}
+<h1>{{ movie_details[0]|e }}</h1>
+<h2>Details</h2>
+<p><strong>Release Date:</strong> {{ movie_details[1] }}</p>
+<h2>Cast & Crew</h2>
 <ul>
-    <h1>{{ movie_details[0]|e }}</h1>
-    <!-- TODO -->
+    {% for worker_id, position, name in workers %}
+    <li>
+        {{ position|e }} - <a href="{{ url_for('get_worker', worker_id=worker_id) }}">{{ name|e }}</a>
+    </li>
+    {% endfor %}
+</ul>
+<h2>Genres</h2>
+<ul>
+    {% for genre_id, name in genres %}
+    <li>
+        <a href="{{ url_for('get_genre', genre_id=genre_id) }}">{{ name|e }}</a>
+    </li>
+    {% endfor %}
 </ul>
 {% endblock %}
