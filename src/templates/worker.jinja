@@ -2,9 +2,9 @@
 {% block body %}
 <ul>
     <h1>{{ worker_details[0]|e }}</h1>
-    {% for movie_id, name, release_year, positions in movies %}
+    {% for movie_id, movie_name, release_year, positions in movies %}
     <li>
-        <a href="{{ url_for('get_movie', movie_id=movie_id) }}">{{ name|e }} ({{ release_year }})</a> - {{ positions|e }}
+        <a href="{{ url_for('get_movie', movie_id=movie_id) }}">{{ movie_name|e }} ({{ release_year }})</a> - {{ positions|e }}
     </li>
     {% endfor %}
 </ul>
