@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 import psycopg
 
@@ -12,6 +12,10 @@ database_url = os.getenv("DATABASE_URL")
 app = FastAPI()
 app.mount("/public", StaticFiles(directory="src/public"), name="public")
 templates = Jinja2Templates(directory="src/templates")
+
+@app.get("/favicon.ico", response_class=RedirectResponse, status_code=301)
+def get_icon():
+    return "/public/favicon.ico"
 
 @app.get("/", response_class=HTMLResponse)
 async def get_movies(request: Request):
