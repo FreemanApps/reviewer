@@ -2,6 +2,7 @@ import os
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request
+from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 import psycopg
@@ -9,6 +10,7 @@ import psycopg
 load_dotenv()
 database_url = os.getenv("DATABASE_URL")
 app = FastAPI()
+app.mount("/public", StaticFiles(directory="src/public"), name="public")
 templates = Jinja2Templates(directory="src/templates")
 
 @app.get("/", response_class=HTMLResponse)

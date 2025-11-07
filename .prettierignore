@@ -1,1 +1,2 @@
 *.jinja
+/src/public
