@@ -34,10 +34,12 @@ CREATE TABLE reviewer.person (
 
 CREATE TABLE reviewer.review (
     review_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    score INTEGER CHECK (score >= 0 AND score <= 10),
+    review_score INTEGER CHECK (review_score >= 0 AND review_score <= 10),
     review_content TEXT,
+    review_date TIMESTAMP NOT NULL,
     person_id INTEGER NOT NULL REFERENCES person(person_id) ON DELETE CASCADE,
     movie_id INTEGER NOT NULL REFERENCES movie(movie_id) ON DELETE CASCADE
+    CHECK (review_score IS NOT NULL OR review_content IS NOT NULL)
 );
 
 CREATE TABLE reviewer.review_reaction (

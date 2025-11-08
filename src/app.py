@@ -59,7 +59,26 @@ async def get_movie(request: Request, movie_id: int):
                             ORDER BY g.genre_name
                         ''', (movie_id,))
             genres = cur.fetchall()
-    return templates.TemplateResponse(request=request, name="movie.jinja", context={"movie_details": movie_details, "workers": workers, "genres": genres})
+
+            cur.execute('''
+                            SELECT
+                            r.review_id
+                            ,r.score
+                            ,p.person_name
+                            ,COUNT(*) FILTER (WHERE rr.review_reaction_type = 'like') likes
+                            ,COUNT(*) FILTER (WHERE rr.review_reaction_type = 'dislike') dislikes
+                            ,COUNT(*) FILTER (WHERE rr.review_reaction_type = 'like') - COUNT(*) FILTER (WHERE rr.review_reaction_type = 'dislike') ordering
+                            FROM reviewer.movie m
+                            JOIN reviewer.review r ON m.movie_id = r.movie_id
+                            JOIN reviewer.person p ON r.person_id = p.person_id
+                            JOIN reviewer.review_reaction rr ON r.review_id = rr.review_id
+                            WHERE m.movie_id = %s
+                            GROUP BY r.review_id, p.person_id
+                            ORDER BY ordering DESC;
+                        ''', (movie_id,))
+            reviews = cur.fetchall()
+
+    return templates.TemplateResponse(request=request, name="movie.jinja", context={"movie_details": movie_details, "workers": workers, "genres": genres, "reviews": reviews})
 
 @app.get("/worker/{worker_id}", response_class=HTMLResponse)
 async def get_worker(request: Request, worker_id: int):
@@ -106,3 +125,29 @@ async def get_genre(request: Request, genre_id: int):
             movies = cur.fetchall()
     return templates.TemplateResponse(request=request, name="genre.jinja", context={"genre_details": genre_details, "movies": movies})
             
+@app.get("/review/{review_id}", response_class=HTMLResponse)
+async def get_review(request: Request, review_id: int):
+    with psycopg.connect(database_url) as conn:
+        with conn.cursor() as cur:
+            cur.execute()
+            review_details = cur.fetchall()
+
+            cur.execute()
+            comments = cur.fetchall()
+    
+    return templates.TemplateResponse(request=request, name="review.jinja", context={"review_details": review_details, "comments": comments})
+
+@app.get("/person/{person_id}", response_class=HTMLResponse)
+async def get_person(request: Request, person_id: int):
+    with psycopg.connect(database_url) as conn:
+        with conn.cursor() as cur:
+            cur.execute()
+            person_details = cur.fetchall()
+
+            cur.execute()
+            reviews = cur.fetchall()
+
+            cur.execute()
+            comments = cur.fetchall()
+    
+    return templates.TemplateResponse(request=request, name="person.jinja", context={"person_details": person_details, "reviews": reviews, "comments": comments})
