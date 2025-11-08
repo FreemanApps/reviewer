@@ -140,7 +140,7 @@ async def get_review(request: Request, review_id: int):
                             WHERE r.review_id = %s
                             GROUP BY r.review_id, p.person_id
                         ''', (review_id,))
-            review_details = cur.fetchall()
+            review_details = cur.fetchone()
 
             cur.execute('''
                             SELECT
@@ -170,10 +170,15 @@ async def get_person(request: Request, person_id: int):
                             FROM reviewer.person
                             WHERE person_id = %s
                         ''', (person_id,))
-            person_details = cur.fetchall()
+            person_details = cur.fetchone()
 
             cur.execute('''
-                            SELECT r.review_id, r.review_score, r.review_timestamp AT TIME ZONE 'America/New_York', m.movie_name
+                            SELECT
+                            r.review_id
+                            ,r.review_score
+                            ,TO_CHAR(r.review_timestamp AT TIME ZONE 'America/New_York', 'DD Mon YYYY') AS review_date
+                            ,TO_CHAR(r.review_timestamp AT TIME ZONE 'America/New_York', 'HH:MI:SS AM') AS review_time
+                            ,m.movie_name
                             FROM reviewer.review r
                             JOIN reviewer.movie m ON r.movie_id = m.movie_id
                             WHERE r.person_id = %s
@@ -182,10 +187,19 @@ async def get_person(request: Request, person_id: int):
             reviews = cur.fetchall()
 
             cur.execute('''
-                            SELECT rp.reply_timestamp AT TIME ZONE 'America/New_York', rv.review_id, rv.review_score, p.person_name
+                            SELECT
+                            TO_CHAR(rp.reply_timestamp AT TIME ZONE 'America/New_York', 'DD Mon YYYY') AS reply_date
+                            ,TO_CHAR(rp.reply_timestamp AT TIME ZONE 'America/New_York', 'HH:MI:SS AM') AS reply_time
+                            ,rv.review_id
+                            ,rv.review_score
+                            ,TO_CHAR(rv.review_timestamp AT TIME ZONE 'America/New_York', 'DD Mon YYYY') AS review_date
+                            ,TO_CHAR(rv.review_timestamp AT TIME ZONE 'America/New_York', 'HH:MI:SS AM') AS review_time
+                            ,p.person_name AS reviewerer
+                            ,m.movie_name
                             FROM reviewer.reply rp
                             JOIN reviewer.review rv ON rp.review_id = rv.review_id
                             JOIN reviewer.person p ON rv.person_id = p.person_id
+                            JOIN reviewer.movie m ON rv.movie_id = m.movie_id
                             WHERE rp.person_id = %s
                             ORDER BY rp.reply_timestamp DESC
                         ''', (person_id,))
