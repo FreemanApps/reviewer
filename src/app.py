@@ -42,20 +42,18 @@ async def get_movie(request: Request, movie_id: int):
 
             cur.execute('''
                             SELECT mw.movie_worker_position AS worker_position, w.worker_id, w.worker_name
-                            FROM reviewer.movie m
-                            JOIN reviewer.movie_worker_bridge mw ON m.movie_id = mw.movie_id
+                            FROM reviewer.movie_worker_bridge mw
                             JOIN reviewer.worker w ON mw.worker_id = w.worker_id
-                            WHERE m.movie_id = %s
+                            WHERE mw.movie_id = %s
                             ORDER BY mw.movie_worker_position, w.worker_name
                         ''', (movie_id,))
             workers = cur.fetchall()
 
             cur.execute('''
                             SELECT g.genre_id, g.genre_name
-                            FROM reviewer.movie m
-                            JOIN reviewer.movie_genre_bridge mg ON m.movie_id = mg.movie_id
+                            FROM reviewer.movie_genre_bridge mg
                             JOIN reviewer.genre g ON mg.genre_id = g.genre_id
-                            WHERE m.movie_id = %s
+                            WHERE mg.movie_id = %s
                             ORDER BY g.genre_name
                         ''', (movie_id,))
             genres = cur.fetchall()
@@ -63,18 +61,17 @@ async def get_movie(request: Request, movie_id: int):
             cur.execute('''
                             SELECT
                             r.review_id
-                            ,r.score
+                            ,r.review_score
                             ,p.person_name
                             ,COUNT(*) FILTER (WHERE rr.review_reaction_type = 'like') likes
                             ,COUNT(*) FILTER (WHERE rr.review_reaction_type = 'dislike') dislikes
                             ,COUNT(*) FILTER (WHERE rr.review_reaction_type = 'like') - COUNT(*) FILTER (WHERE rr.review_reaction_type = 'dislike') ordering
-                            FROM reviewer.movie m
-                            JOIN reviewer.review r ON m.movie_id = r.movie_id
+                            FROM reviewer.review r
                             JOIN reviewer.person p ON r.person_id = p.person_id
-                            JOIN reviewer.review_reaction rr ON r.review_id = rr.review_id
-                            WHERE m.movie_id = %s
+                            LEFT OUTER JOIN reviewer.review_reaction rr ON r.review_id = rr.review_id
+                            WHERE r.movie_id = %s
                             GROUP BY r.review_id, p.person_id
-                            ORDER BY ordering DESC;
+                            ORDER BY ordering DESC, r.review_date DESC
                         ''', (movie_id,))
             reviews = cur.fetchall()
 
@@ -92,11 +89,14 @@ async def get_worker(request: Request, worker_id: int):
             worker_details = cur.fetchone()
 
             cur.execute('''
-                            SELECT m.movie_id, m.movie_name, EXTRACT(year FROM m.release_date) AS release_year, STRING_AGG(mw.movie_worker_position, '/' ORDER BY mw.movie_worker_position) AS positions
+                            SELECT
+                            m.movie_id
+                            ,m.movie_name
+                            ,EXTRACT(year FROM m.release_date) AS release_year
+                            ,STRING_AGG(mw.movie_worker_position, '/' ORDER BY mw.movie_worker_position) AS positions
                             FROM reviewer.movie m
                             JOIN reviewer.movie_worker_bridge mw ON m.movie_id = mw.movie_id
-                            JOIN reviewer.worker w ON mw.worker_id = w.worker_id
-                            WHERE w.worker_id = %s
+                            WHERE mw.worker_id = %s
                             GROUP BY m.movie_id
                             ORDER BY m.release_date
                         ''', (worker_id,))
@@ -118,8 +118,7 @@ async def get_genre(request: Request, genre_id: int):
                             SELECT m.movie_id, m.movie_name, EXTRACT(year FROM m.release_date) AS release_year
                             FROM reviewer.movie m
                             JOIN reviewer.movie_genre_bridge mg ON m.movie_id = mg.movie_id
-                            JOIN reviewer.genre g ON mg.genre_id = g.genre_id
-                            WHERE g.genre_id = %s
+                            WHERE mg.genre_id = %s
                             ORDER BY m.movie_name
                         ''', (genre_id,))
             movies = cur.fetchall()
@@ -129,13 +128,41 @@ async def get_genre(request: Request, genre_id: int):
 async def get_review(request: Request, review_id: int):
     with psycopg.connect(database_url) as conn:
         with conn.cursor() as cur:
-            cur.execute()
+            cur.execute('''
+                            SELECT
+                            r.review_score
+                            ,r.review_content
+                            ,r.review_date AT TIME ZONE 'America/New_York'
+                            ,p.person_id
+                            ,p.person_name
+                            ,COUNT(*) FILTER (WHERE rr.review_reaction_type = 'like') likes
+                            ,COUNT(*) FILTER (WHERE rr.review_reaction_type = 'dislike') dislikes
+                            FROM reviewer.review r
+                            JOIN reviewer.person p ON r.person_id = p.person_id
+                            LEFT OUTER JOIN reviewer.review_reaction rr ON r.review_id = rr.review_id
+                            WHERE r.review_id = %s
+                            GROUP BY r.review_id, p.person_id
+                        ''', (review_id,))
             review_details = cur.fetchall()
 
-            cur.execute()
-            comments = cur.fetchall()
+            cur.execute('''
+                            SELECT
+                            r.reply_content
+                            ,r.reply_date AT TIME ZONE  'America/New_York'
+                            ,p.person_id
+                            ,p.person_name
+                            ,COUNT(*) FILTER (WHERE rr.reply_reaction_type = 'like') likes
+                            ,COUNT(*) FILTER (WHERE rr.reply_reaction_type = 'dislike') dislikes
+                            FROM reviewer.reply r
+                            JOIN reviewer.person p ON r.person_id = p.person_id
+                            LEFT OUTER JOIN reviewer.reply_reaction rr ON r.reply_id = rr.reply_id
+                            WHERE r.review_id = %s
+                            GROUP BY r.reply_id, p.person_id
+                            ORDER BY r.reply_date                        
+                        ''', (review_id,))
+            replies = cur.fetchall()
     
-    return templates.TemplateResponse(request=request, name="review.jinja", context={"review_details": review_details, "comments": comments})
+    return templates.TemplateResponse(request=request, name="review.jinja", context={"review_details": review_details, "replies": replies})
 
 @app.get("/person/{person_id}", response_class=HTMLResponse)
 async def get_person(request: Request, person_id: int):
@@ -148,6 +175,6 @@ async def get_person(request: Request, person_id: int):
             reviews = cur.fetchall()
 
             cur.execute()
-            comments = cur.fetchall()
+            replies = cur.fetchall()
     
-    return templates.TemplateResponse(request=request, name="person.jinja", context={"person_details": person_details, "reviews": reviews, "comments": comments})
+    return templates.TemplateResponse(request=request, name="person.jinja", context={"person_details": person_details, "reviews": reviews, "replies": replies})
