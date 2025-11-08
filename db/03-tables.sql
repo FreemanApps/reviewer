@@ -36,7 +36,7 @@ CREATE TABLE reviewer.review (
     review_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     review_score INTEGER CHECK (review_score >= 0 AND review_score <= 10),
     review_content TEXT,
-    review_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    review_timestamp TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     person_id INTEGER NOT NULL REFERENCES person(person_id) ON DELETE CASCADE,
     movie_id INTEGER NOT NULL REFERENCES movie(movie_id) ON DELETE CASCADE
     CHECK (review_score IS NOT NULL OR review_content IS NOT NULL)
@@ -52,7 +52,7 @@ CREATE TABLE reviewer.review_reaction (
 CREATE TABLE reviewer.reply (
     reply_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     reply_content TEXT NOT NULL,
-    reply_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    reply_timestamp TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     person_id INTEGER NOT NULL REFERENCES person(person_id) ON DELETE CASCADE,
     review_id INTEGER NOT NULL REFERENCES review(review_id) ON DELETE CASCADE
 );

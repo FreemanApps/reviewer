@@ -2,9 +2,10 @@
 2. Convert queries with JOIN(s) into views - 11/14
 3. Add authentication middleware - 11/14
 4. Add database logger - 11/14
-5. Add ability to like and dislike reviews - 11/15
-6. Add ability to like and dislike comments - 11/16
-7. Add ability to delete reviews, comments and persons - 11/16
-8. Add ability to add / update reviews, comments, and persons - 11/21
-9. Add ability to generate interesting user statistics for the year - 11/23 (may get scrapped)
-10. Add ability to add, update and delete movies, workers and genres - 11/30 (may get scrapped)
+5. Build navigation bar - 11/14
+6. Add ability to like and dislike reviews - 11/15
+7. Add ability to like and dislike comments - 11/16
+8. Add ability to delete reviews, comments and persons - 11/16
+9. Add ability to add / update reviews, comments, and persons - 11/21
+10. Add ability to generate interesting user statistics for the year - 11/23 (may get scrapped)
+11. Add ability to add, update and delete movies, workers and genres - 11/30 (may get scrapped)

@@ -59,12 +59,16 @@ async def get_movie(request: Request, movie_id: int):
             genres = cur.fetchall()
 
             cur.execute('''
-                            SELECT r.review_id, r.review_score, r.review_date AT TIME ZONE 'America/New_York', p.person_name
+                            SELECT
+                            r.review_id
+                            ,r.review_score
+                            ,TO_CHAR(r.review_timestamp AT TIME ZONE 'America/New_York', 'DD Mon YYYY') AS review_date
+                            ,TO_CHAR(r.review_timestamp AT TIME ZONE 'America/New_York', 'HH:MI:SS AM') AS review_time
+                            ,p.person_name AS reviewer
                             FROM reviewer.review r
                             JOIN reviewer.person p ON r.person_id = p.person_id
-                            LEFT OUTER JOIN reviewer.review_reaction rr ON r.review_id = rr.review_id
                             WHERE r.movie_id = %s
-                            ORDER BY r.review_date DESC
+                            ORDER BY r.review_timestamp DESC
                         ''', (movie_id,))
             reviews = cur.fetchall()
 
@@ -125,7 +129,7 @@ async def get_review(request: Request, review_id: int):
                             SELECT
                             r.review_score
                             ,r.review_content
-                            ,r.review_date AT TIME ZONE 'America/New_York'
+                            ,r.review_timestamp AT TIME ZONE 'America/New_York'
                             ,p.person_id
                             ,p.person_name
                             ,COUNT(*) FILTER (WHERE rr.review_reaction_type = 'like') likes
@@ -141,7 +145,7 @@ async def get_review(request: Request, review_id: int):
             cur.execute('''
                             SELECT
                             r.reply_content
-                            ,r.reply_date AT TIME ZONE 'America/New_York'
+                            ,r.reply_timestamp AT TIME ZONE 'America/New_York'
                             ,p.person_id
                             ,p.person_name
                             ,COUNT(*) FILTER (WHERE rr.reply_reaction_type = 'like') likes
@@ -151,7 +155,7 @@ async def get_review(request: Request, review_id: int):
                             LEFT OUTER JOIN reviewer.reply_reaction rr ON r.reply_id = rr.reply_id
                             WHERE r.review_id = %s
                             GROUP BY r.reply_id, p.person_id
-                            ORDER BY r.reply_date                        
+                            ORDER BY r.reply_timestamp                        
                         ''', (review_id,))
             replies = cur.fetchall()
     
@@ -169,21 +173,21 @@ async def get_person(request: Request, person_id: int):
             person_details = cur.fetchall()
 
             cur.execute('''
-                            SELECT r.review_id, r.review_score, r.review_date AT TIME ZONE 'America/New_York', m.movie_name
+                            SELECT r.review_id, r.review_score, r.review_timestamp AT TIME ZONE 'America/New_York', m.movie_name
                             FROM reviewer.review r
                             JOIN reviewer.movie m ON r.movie_id = m.movie_id
                             WHERE r.person_id = %s
-                            ORDER BY r.review_date DESC
+                            ORDER BY r.review_timestamp DESC
                         ''', (person_id,))
             reviews = cur.fetchall()
 
             cur.execute('''
-                            SELECT rp.reply_date AT TIME ZONE 'America/New_York', rv.review_id, rv.review_score, p.person_name
+                            SELECT rp.reply_timestamp AT TIME ZONE 'America/New_York', rv.review_id, rv.review_score, p.person_name
                             FROM reviewer.reply rp
                             JOIN reviewer.review rv ON rp.review_id = rv.review_id
                             JOIN reviewer.person p ON rv.person_id = p.person_id
                             WHERE rp.person_id = %s
-                            ORDER BY rp.reply_date DESC
+                            ORDER BY rp.reply_timestamp DESC
                         ''', (person_id,))
             replies = cur.fetchall()
     

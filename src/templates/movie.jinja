@@ -19,4 +19,16 @@
     </li>
     {% endfor %}
 </ul>
+<h2>Reviews</h2>
+{% if reviews %}
+<ul>
+    {% for review_id, review_score, review_date, review_time, reviewer in reviews %}
+    <li>
+        <a href="{{ url_for('get_review', review_id=review_id) }}">{{ review_score }} from {{ reviewer|e }} on {{ review_date }} at {{ review_time }}</a>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>None</p>
+{% endif %}
 {% endblock %}

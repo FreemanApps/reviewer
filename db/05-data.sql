@@ -537,16 +537,16 @@ VALUES ('Reviewer In the Woods', 'reviewinthewoods@yahoo.com', 'placeholder');
 INSERT INTO reviewer.person (person_name, email_address, hashed_password)
 VALUES ('My Pet Seel Reviews', 'mypetseelreviews@gmail.com', 'placeholder');
 
-INSERT INTO reviewer.review (review_score, review_content, review_date, person_id, movie_id)
+INSERT INTO reviewer.review (review_score, review_content, review_timestamp, person_id, movie_id)
 VALUES (8, 'Pretty good!', CURRENT_TIMESTAMP - INTERVAL '3 days', 1, 4);
 
-INSERT INTO reviewer.review (review_score, review_content, review_date, person_id, movie_id)
+INSERT INTO reviewer.review (review_score, review_content, review_timestamp, person_id, movie_id)
 VALUES (3, 'Absolutely awful...', CURRENT_TIMESTAMP - INTERVAL '2 days', 2, 1);
 
-INSERT INTO reviewer.review (review_score, review_content, review_date, person_id, movie_id)
+INSERT INTO reviewer.review (review_score, review_content, review_timestamp, person_id, movie_id)
 VALUES (7, 'Solid. I had a fun time', CURRENT_TIMESTAMP - INTERVAL '1 day 23 hours', 2, 2);
 
-INSERT INTO reviewer.review (review_score, review_content, review_date, person_id, movie_id)
+INSERT INTO reviewer.review (review_score, review_content, review_timestamp, person_id, movie_id)
 VALUES (10, 'Amazing! Best move of the year', CURRENT_TIMESTAMP - INTERVAL '1 day 12 hours', 4, 1);
 
 INSERT INTO reviewer.review_reaction (review_reaction_type, person_id, review_id)
@@ -570,16 +570,16 @@ VALUES ('like', 3, 4);
 INSERT INTO reviewer.review_reaction (review_reaction_type, person_id, review_id)
 VALUES ('dislike', 3, 3);
 
-INSERT INTO reviewer.reply (reply_content, reply_date, person_id, review_id)
+INSERT INTO reviewer.reply (reply_content, reply_timestamp, person_id, review_id)
 VALUES ('Wow, you have a bad taste in movies', CURRENT_TIMESTAMP - INTERVAL '23 hours', 3, 2);
 
-INSERT INTO reviewer.reply (reply_content, reply_date, person_id, review_id)
+INSERT INTO reviewer.reply (reply_content, reply_timestamp, person_id, review_id)
 VALUES ('Who are you?', CURRENT_TIMESTAMP - INTERVAL '22 hours', 4, 2);
 
-INSERT INTO reviewer.reply (reply_content, reply_date, person_id, review_id)
+INSERT INTO reviewer.reply (reply_content, reply_timestamp, person_id, review_id)
 VALUES ('Potato Eel is cancer', CURRENT_TIMESTAMP - INTERVAL '21 hours', 1, 2);
 
-INSERT INTO reviewer.reply (reply_content, reply_date, person_id, review_id)
+INSERT INTO reviewer.reply (reply_content, reply_timestamp, person_id, review_id)
 VALUES ('Yeah, I thought this was the best as well!', CURRENT_TIMESTAMP - INTERVAL '20 hours', 3, 4);
 
 INSERT INTO reviewer.reply_reaction (reply_reaction_type, person_id, reply_id)
