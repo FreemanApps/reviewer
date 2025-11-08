@@ -59,19 +59,12 @@ async def get_movie(request: Request, movie_id: int):
             genres = cur.fetchall()
 
             cur.execute('''
-                            SELECT
-                            r.review_id
-                            ,r.review_score
-                            ,p.person_name
-                            ,COUNT(*) FILTER (WHERE rr.review_reaction_type = 'like') likes
-                            ,COUNT(*) FILTER (WHERE rr.review_reaction_type = 'dislike') dislikes
-                            ,COUNT(*) FILTER (WHERE rr.review_reaction_type = 'like') - COUNT(*) FILTER (WHERE rr.review_reaction_type = 'dislike') ordering
+                            SELECT r.review_id, r.review_score, r.review_date AT TIME ZONE 'America/New_York', p.person_name
                             FROM reviewer.review r
                             JOIN reviewer.person p ON r.person_id = p.person_id
                             LEFT OUTER JOIN reviewer.review_reaction rr ON r.review_id = rr.review_id
                             WHERE r.movie_id = %s
-                            GROUP BY r.review_id, p.person_id
-                            ORDER BY ordering DESC, r.review_date DESC
+                            ORDER BY r.review_date DESC
                         ''', (movie_id,))
             reviews = cur.fetchall()
 
@@ -148,7 +141,7 @@ async def get_review(request: Request, review_id: int):
             cur.execute('''
                             SELECT
                             r.reply_content
-                            ,r.reply_date AT TIME ZONE  'America/New_York'
+                            ,r.reply_date AT TIME ZONE 'America/New_York'
                             ,p.person_id
                             ,p.person_name
                             ,COUNT(*) FILTER (WHERE rr.reply_reaction_type = 'like') likes
@@ -168,13 +161,30 @@ async def get_review(request: Request, review_id: int):
 async def get_person(request: Request, person_id: int):
     with psycopg.connect(database_url) as conn:
         with conn.cursor() as cur:
-            cur.execute()
+            cur.execute('''
+                            SELECT person_name
+                            FROM reviewer.person
+                            WHERE person_id = %s
+                        ''', (person_id,))
             person_details = cur.fetchall()
 
-            cur.execute()
+            cur.execute('''
+                            SELECT r.review_id, r.review_score, r.review_date AT TIME ZONE 'America/New_York', m.movie_name
+                            FROM reviewer.review r
+                            JOIN reviewer.movie m ON r.movie_id = m.movie_id
+                            WHERE r.person_id = %s
+                            ORDER BY r.review_date DESC
+                        ''', (person_id,))
             reviews = cur.fetchall()
 
-            cur.execute()
+            cur.execute('''
+                            SELECT rp.reply_date AT TIME ZONE 'America/New_York', rv.review_id, rv.review_score, p.person_name
+                            FROM reviewer.reply rp
+                            JOIN reviewer.review rv ON rp.review_id = rv.review_id
+                            JOIN reviewer.person p ON rv.person_id = p.person_id
+                            WHERE rp.person_id = %s
+                            ORDER BY rp.reply_date DESC
+                        ''', (person_id,))
             replies = cur.fetchall()
     
     return templates.TemplateResponse(request=request, name="person.jinja", context={"person_details": person_details, "reviews": reviews, "replies": replies})
