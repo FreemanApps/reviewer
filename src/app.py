@@ -5,10 +5,27 @@ from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
+import logging
 import psycopg
+from psycopg import ClientCursor
 
+# grab environment variables
 load_dotenv()
 database_url = os.getenv("DATABASE_URL")
+
+# set up database logging
+logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(levelname)s %(message)s")
+logging.getLogger("psycopg").setLevel(logging.INFO)
+class LoggingCursor(ClientCursor):
+    def execute(self, query, params = None, *, prepare = None, binary = None):
+        if params:
+            sql = self.mogrify(query, params)
+        else:
+            sql = query
+        logging.info(sql)
+        super().execute(query, params, prepare=prepare, binary=binary)
+
+# set up app
 app = FastAPI()
 app.mount("/public", StaticFiles(directory="src/public"), name="public")
 templates = Jinja2Templates(directory="src/templates")
@@ -19,7 +36,7 @@ def get_icon():
 
 @app.get("/", response_class=HTMLResponse)
 async def get_movies(request: Request):
-    with psycopg.connect(database_url) as conn:
+    with psycopg.connect(database_url, cursor_factory=LoggingCursor) as conn:
         with conn.cursor() as cur:
             cur.execute('''
                             SELECT movie_id, movie_name, EXTRACT(year FROM release_date) AS release_year
@@ -31,7 +48,7 @@ async def get_movies(request: Request):
 
 @app.get("/movie/{movie_id}", response_class=HTMLResponse)
 async def get_movie(request: Request, movie_id: int):
-    with psycopg.connect(database_url) as conn:
+    with psycopg.connect(database_url, cursor_factory=LoggingCursor) as conn:
         with conn.cursor() as cur:
             cur.execute('''
                             SELECT movie_name, TO_CHAR(release_date, 'DD Mon YYYY')
@@ -76,7 +93,7 @@ async def get_movie(request: Request, movie_id: int):
 
 @app.get("/worker/{worker_id}", response_class=HTMLResponse)
 async def get_worker(request: Request, worker_id: int):
-    with psycopg.connect(database_url) as conn:
+    with psycopg.connect(database_url, cursor_factory=LoggingCursor) as conn:
         with conn.cursor() as cur:
             cur.execute('''
                             SELECT worker_name
@@ -102,7 +119,7 @@ async def get_worker(request: Request, worker_id: int):
 
 @app.get("/genre/{genre_id}", response_class=HTMLResponse)
 async def get_genre(request: Request, genre_id: int):
-    with psycopg.connect(database_url) as conn:
+    with psycopg.connect(database_url, cursor_factory=LoggingCursor) as conn:
         with conn.cursor() as cur:
             cur.execute('''
                             SELECT genre_name
@@ -123,7 +140,7 @@ async def get_genre(request: Request, genre_id: int):
             
 @app.get("/review/{review_id}", response_class=HTMLResponse)
 async def get_review(request: Request, review_id: int):
-    with psycopg.connect(database_url) as conn:
+    with psycopg.connect(database_url, cursor_factory=LoggingCursor) as conn:
         with conn.cursor() as cur:
             cur.execute('''
                             SELECT
@@ -163,7 +180,7 @@ async def get_review(request: Request, review_id: int):
 
 @app.get("/person/{person_id}", response_class=HTMLResponse)
 async def get_person(request: Request, person_id: int):
-    with psycopg.connect(database_url) as conn:
+    with psycopg.connect(database_url, cursor_factory=LoggingCursor) as conn:
         with conn.cursor() as cur:
             cur.execute('''
                             SELECT person_name
