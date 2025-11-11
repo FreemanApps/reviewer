@@ -5,9 +5,9 @@ from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
+from fastapi.middleware.gzip import GZipMiddleware
 import logging
 import psycopg
-from psycopg import ClientCursor
 
 # grab environment variables
 load_dotenv()
@@ -16,7 +16,7 @@ database_url = os.getenv("DATABASE_URL")
 # set up database logging
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(levelname)s %(message)s")
 logging.getLogger("psycopg").setLevel(logging.INFO)
-class LoggingCursor(ClientCursor):
+class LoggingCursor(psycopg.ClientCursor):
     def execute(self, query, params = None, *, prepare = None, binary = None):
         if params:
             sql = self.mogrify(query, params)
@@ -27,6 +27,7 @@ class LoggingCursor(ClientCursor):
 
 # set up app
 app = FastAPI()
+app.add_middleware(GZipMiddleware)
 app.mount("/public", StaticFiles(directory="src/public"), name="public")
 templates = Jinja2Templates(directory="src/templates")
 

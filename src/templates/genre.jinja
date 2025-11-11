@@ -1,11 +1,13 @@
 {% extends "base.jinja" %}
-{% block body %}
-<ul>
-    <h1>{{ genre_details[0]|e }}</h1>
-    {% for movie_id, movie_name, release_year in movies %}
-    <li>
-        <a href="{{ url_for('get_movie', movie_id=movie_id) }}">{{ movie_name|e }} ({{ release_year }})</a>
-    </li>
-    {% endfor %}
-</ul>
+{% block main %}
+<main class="container">
+    <ul>
+        <h1>{{ genre_details[0]|e }}</h1>
+        {% for movie_id, movie_name, release_year in movies %}
+        <li>
+            <a href="{{ url_for('get_movie', movie_id=movie_id) }}">{{ movie_name|e }} ({{ release_year }})</a>
+        </li>
+        {% endfor %}
+    </ul>
+</main>
 {% endblock %}

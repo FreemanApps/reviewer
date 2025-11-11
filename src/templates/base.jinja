@@ -2,17 +2,31 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		<meta name="color-scheme" content="light dark"/>
 		<meta
 			name="description"
 			content="Reviewer is where you can discuss movies with other people. You can write, like and dislike reviews and comments to reviews for movies."
 		/>
 		<title>Reviewer</title>
 		<script src="/public/htmx.min.js"></script>
-		<link rel="icon" type="image/x-icon" href="/public/favicon.ico" />
+		<link rel="stylesheet" href="/public/pico.min.css"/>
+		<link rel="icon" type="image/x-icon" href="/public/favicon.ico"/>
 	</head>
 	<body hx-boost="true">
-		{% block body %}
+		<header>
+			<div class="container">
+				<nav>
+					<ul>
+						<li><a href="{{ url_for('get_movies') }}"><img src="/public/logo.png" width="50" height="50"/></a></li>
+					</ul>
+					<ul>
+						<li><a href="{{ url_for('get_person', person_id=1) }}">User</a></li>
+					</ul>
+				</nav>
+			</div>
+		</header>
+		{% block main %}
 		{% endblock %}
 	</body>
 </html>
