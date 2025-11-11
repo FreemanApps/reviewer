@@ -77,6 +77,13 @@ async def get_movie(request: Request, movie_id: int):
             genres = cur.fetchall()
 
             cur.execute('''
+                            SELECT ROUND(AVG(review_score), 2)
+                            FROM reviewer.review
+                            WHERE movie_id = %s
+                        ''', (movie_id,))
+            reviews_details = cur.fetchone()
+
+            cur.execute('''
                             SELECT
                             r.review_id
                             ,r.review_score
@@ -90,7 +97,7 @@ async def get_movie(request: Request, movie_id: int):
                         ''', (movie_id,))
             reviews = cur.fetchall()
 
-    return templates.TemplateResponse(request=request, name="movie.jinja", context={"movie_details": movie_details, "workers": workers, "genres": genres, "reviews": reviews})
+    return templates.TemplateResponse(request=request, name="movie.jinja", context={"movie_details": movie_details, "workers": workers, "genres": genres, "reviews_details": reviews_details,"reviews": reviews})
 
 @app.get("/worker/{worker_id}", response_class=HTMLResponse)
 async def get_worker(request: Request, worker_id: int):
