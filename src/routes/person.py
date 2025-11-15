@@ -22,7 +22,6 @@ async def get_person(request: Request, person_id: int):
                             r.review_id
                             ,r.review_score
                             ,TO_CHAR(r.review_timestamp AT TIME ZONE 'America/New_York', 'DD Mon YYYY') AS review_date
-                            ,TO_CHAR(r.review_timestamp AT TIME ZONE 'America/New_York', 'HH:MI:SS AM') AS review_time
                             ,m.movie_name
                             FROM reviewer.review r
                             JOIN reviewer.movie m ON r.movie_id = m.movie_id
@@ -34,11 +33,9 @@ async def get_person(request: Request, person_id: int):
             cur.execute('''
                             SELECT
                             TO_CHAR(rp.reply_timestamp AT TIME ZONE 'America/New_York', 'DD Mon YYYY') AS reply_date
-                            ,TO_CHAR(rp.reply_timestamp AT TIME ZONE 'America/New_York', 'HH:MI:SS AM') AS reply_time
                             ,rv.review_id
                             ,rv.review_score
                             ,TO_CHAR(rv.review_timestamp AT TIME ZONE 'America/New_York', 'DD Mon YYYY') AS review_date
-                            ,TO_CHAR(rv.review_timestamp AT TIME ZONE 'America/New_York', 'HH:MI:SS AM') AS review_time
                             ,p.person_name AS reviewerer
                             ,m.movie_name
                             FROM reviewer.reply rp

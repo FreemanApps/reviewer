@@ -47,7 +47,6 @@ async def get_movie(request: Request, movie_id: int):
                             r.review_id
                             ,r.review_score
                             ,TO_CHAR(r.review_timestamp AT TIME ZONE 'America/New_York', 'DD Mon YYYY') AS review_date
-                            ,TO_CHAR(r.review_timestamp AT TIME ZONE 'America/New_York', 'HH:MI:SS AM') AS review_time
                             ,p.person_name AS reviewer
                             FROM reviewer.review r
                             JOIN reviewer.person p ON r.person_id = p.person_id

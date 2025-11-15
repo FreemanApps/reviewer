@@ -14,7 +14,7 @@ async def get_review(request: Request, review_id: int):
                             SELECT
                             r.review_score
                             ,r.review_content
-                            ,r.review_timestamp AT TIME ZONE 'America/New_York'
+                            ,TO_CHAR(r.review_timestamp AT TIME ZONE 'America/New_York', 'DD Mon YYYY') AS review_date
                             ,p.person_id
                             ,p.person_name
                             ,COUNT(*) FILTER (WHERE rr.review_reaction_type = 'like') likes
@@ -30,7 +30,7 @@ async def get_review(request: Request, review_id: int):
             cur.execute('''
                             SELECT
                             r.reply_content
-                            ,r.reply_timestamp AT TIME ZONE 'America/New_York'
+                            ,TO_CHAR(r.reply_timestamp AT TIME ZONE 'America/New_York', 'DD Mon YYYY') AS reply_date
                             ,p.person_id
                             ,p.person_name
                             ,COUNT(*) FILTER (WHERE rr.reply_reaction_type = 'like') likes

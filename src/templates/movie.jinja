@@ -31,9 +31,9 @@
         <p><strong>Average Rating:</strong> {% if reviews_details[0] %}{{ reviews_details[0] }}{% else %}N/A{% endif %}</p>
         {% if reviews %}
         <ul>
-            {% for review_id, review_score, review_date, review_time, reviewer in reviews %}
+            {% for review_id, review_score, review_date, reviewer in reviews %}
             <li>
-                <a href="{{ url_for('get_review', review_id=review_id) }}">{{ review_score }} from {{ reviewer|e }} on {{ review_date }} at {{ review_time }}</a>
+                <a href="{{ url_for('get_review', review_id=review_id) }}">{{ review_score }} from {{ reviewer|e }} on {{ review_date }}</a>
             </li>
             {% endfor %}
         </ul>

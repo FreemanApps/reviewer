@@ -3,16 +3,31 @@
 <main class="container">
     <h1>Review</h1>
     <section>
-        
+        <h2>Details</h2>
+        <article>
+            <header class="grid">
+                <p><strong>User:</strong> <a href="{{ url_for('get_person', person_id=review_details[3]) }}">{{ review_details[4]|e }}</a></p>
+                <p><strong>Date:</strong> {{ review_details[2] }}</p>
+                <p><strong>Score:</strong> {{ review_details[0] }}</p>
+                <p><strong>Likes:</strong> {{ review_details[5] }}</p>
+                <p><strong>Dislikes:</strong> {{ review_details[6] }}</p>
+            </header>
+            {{ review_details[1]|e }}
+        </article>
     </section>
     <section>
-        <ul>
-            {% for movie_id, movie_name, release_year in movies %}
-            <li>
-                <a href="{{ url_for('get_movie', movie_id=movie_id) }}">{{ movie_name|e }} ({{ release_year }})</a>
-            </li>
-            {% endfor %}
-        </ul>
+        <h2>Replies</h2>
+        {% for reply_content, reply_date, person_id, person_name, likes, dislikes in replies %}
+        <article>
+            <header class="grid">
+                <p><strong>User:</strong> <a href="{{ url_for('get_person', person_id=person_id) }}">{{ person_name|e }}</a></p>
+                <p><strong>Date:</strong> {{ reply_date }}</p>
+                <p><strong>Likes:</strong> {{ likes }}</p>
+                <p><strong>Dislikes:</strong> {{ dislikes }}</p>
+            </header>
+            {{ reply_content|e }}
+        </article>
+        {% endfor %}
     </section>
 </main>
 {% endblock %}
