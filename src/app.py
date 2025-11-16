@@ -1,11 +1,17 @@
-from fastapi import FastAPI, Request
+from pydantic import BaseModel
+from fastapi import FastAPI, Request, Form
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.middleware.gzip import GZipMiddleware
 import psycopg
+from typing import Annotated
 
 from .services import shared
 from .routes import genre, movie, person, review, worker
+
+class LoginFormData(BaseModel):
+    email: str
+    password: str
 
 # set up app
 app = FastAPI()
@@ -26,7 +32,16 @@ async def get_movies(request: Request):
                             ORDER BY movie_name, release_date
                         ''')
             movies = cur.fetchall()
+            print(movies)
     return shared.templates.TemplateResponse(request=request, name="home.jinja", context={"movies": movies})
+
+@app.get("/login", response_class=HTMLResponse)
+def get_login(request: Request):
+    return shared.templates.TemplateResponse(request=request, name="login.jinja")
+
+@app.post("/login", response_class=HTMLResponse)
+async def attempt_login(data: Annotated[LoginFormData, Form()]):
+    print(data)
 
 app.include_router(genre.router)
 app.include_router(movie.router)

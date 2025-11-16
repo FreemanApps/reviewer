@@ -6,13 +6,13 @@
         <h2>Details</h2>
         <article>
             <header class="grid">
-                <p><strong>User:</strong> <a href="{{ url_for('get_person', person_id=review_details[3]) }}">{{ review_details[4]|e }}</a></p>
-                <p><strong>Date:</strong> {{ review_details[2] }}</p>
-                <p><strong>Score:</strong> {{ review_details[0] }}</p>
-                <p><strong>Likes:</strong> {{ review_details[5] }}</p>
-                <p><strong>Dislikes:</strong> {{ review_details[6] }}</p>
+                <p><strong>User:</strong> <a href="{{ url_for('get_person', person_id=review_details['person_id']) }}">{{ review_details["person_name"]|e }}</a></p>
+                <p><strong>Date:</strong> {{ review_details["review_date"] }}</p>
+                <p><strong>Score:</strong> {{ review_details["review_score"] }}</p>
+                <p><strong>Likes:</strong> {{ review_details["likes"] }}</p>
+                <p><strong>Dislikes:</strong> {{ review_details["dislikes"] }}</p>
             </header>
-            {{ review_details[1]|e }}
+            {{ review_details["review_content"]|e }}
         </article>
     </section>
     <section>

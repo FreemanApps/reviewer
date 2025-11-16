@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
 import psycopg
+from psycopg.rows import dict_row
 
 from ..services import shared
 
@@ -9,7 +10,7 @@ router = APIRouter()
 @router.get("/review/{review_id}", response_class=HTMLResponse)
 async def get_review(request: Request, review_id: int):
     with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
-        with conn.cursor() as cur:
+        with conn.cursor(row_factory=dict_row) as cur:
             cur.execute('''
                             SELECT
                             r.review_score
@@ -27,6 +28,7 @@ async def get_review(request: Request, review_id: int):
                         ''', (review_id,))
             review_details = cur.fetchone()
 
+        with conn.cursor() as cur:
             cur.execute('''
                             SELECT
                             r.reply_content

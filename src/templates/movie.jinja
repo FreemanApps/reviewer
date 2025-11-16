@@ -1,10 +1,10 @@
 {% extends "base.jinja" %}
 {% block main %}
 <main class="container">
-    <h1>{{ movie_details[0]|e }}</h1>
+    <h1>{{ movie_details["movie_name"]|e }}</h1>
     <section>
         <h2>Details</h2>
-        <p><strong>Release Date:</strong> {{ movie_details[1] }}</p>
+        <p><strong>Release Date:</strong> {{ movie_details["release_year"] }}</p>
     </section>
     <section>
         <h2>Cast & Crew</h2>
@@ -28,7 +28,7 @@
     </section>
     <section>
         <h2>Reviews</h2>
-        <p><strong>Average Rating:</strong> {% if reviews_details[0] %}{{ reviews_details[0] }}{% else %}N/A{% endif %}</p>
+        <p><strong>Average Rating:</strong> {% if reviews_details["average_review_score"] %}{{ reviews_details["average_review_score"] }}{% else %}N/A{% endif %}</p>
         {% if reviews %}
         <ul>
             {% for review_id, review_score, review_date, reviewer in reviews %}

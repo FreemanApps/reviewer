@@ -1,7 +1,7 @@
 {% extends "base.jinja" %}
 {% block main %}
 <main class="container">
-    <h1>{{ person_details[0]|e }}</h1>
+    <h1>{{ person_details["person_name"]|e }}</h1>
     <section>
         <h2>Reviews</h2>
         {% if reviews %}

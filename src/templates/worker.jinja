@@ -1,7 +1,7 @@
 {% extends "base.jinja" %}
 {% block main %}
 <main class="container">
-    <h1>{{ worker_details[0]|e }}</h1>
+    <h1>{{ worker_details["worker_name"]|e }}</h1>
     <section>
         <ul>
             {% for movie_id, movie_name, release_year, positions in movies %}
