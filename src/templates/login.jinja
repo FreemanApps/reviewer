@@ -2,7 +2,7 @@
 {% block main %}
 <main class="container">
     <h1>Login</h1>
-    <form hx-post="/login" hx-target="main">
+    <form hx-post="/login" hx-target="body" hx-push-url="true">
         <fieldset class="grid">
             <input type="text" name="email" placeholder="Email" aria-label="Email"/>
             <input type="password" name="password" placeholder="Password" aria-label="Password"/>

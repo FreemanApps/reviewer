@@ -1,17 +1,30 @@
 from pydantic import BaseModel
-from fastapi import FastAPI, Request, Form
+from pwdlib import PasswordHash
+from fastapi import FastAPI, Request, Response, Form, Cookie, Depends, HTTPException, status
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, RedirectResponse
-from fastapi.middleware.gzip import GZipMiddleware
 import psycopg
 from typing import Annotated
 
+#from dependencies import
 from .services import shared
 from .routes import genre, movie, person, review, worker
 
 class LoginFormData(BaseModel):
     email: str
     password: str
+
+password_hash = PasswordHash.recommended()
+
+async def get_current_person(person_id: str = Cookie(None)):
+    if not person_id:
+        raise HTTPException(
+            status_code=status.HTTP_303_SEE_OTHER,
+            headers={'Location': '/login'}
+        )
+    else:
+        return person_id
 
 # set up app
 app = FastAPI()
@@ -22,8 +35,21 @@ app.mount("/public", StaticFiles(directory="src/public"), name="public")
 def get_icon():
     return "/public/favicon.ico"
 
+@app.get("/login", response_class=HTMLResponse)
+def get_login(request: Request):
+    return shared.templates.TemplateResponse(request=request, name="login.jinja")
+
+@app.post("/login", response_class=HTMLResponse)
+async def login(request: Request, response: Response, form_data: Annotated[LoginFormData, Form()]):
+    # TODO: verify user and password
+    print(form_data)
+
+    response = RedirectResponse("/", status.HTTP_303_SEE_OTHER)
+    response.set_cookie(key="person_id", value=form_data.email)
+    return response
+
 @app.get("/", response_class=HTMLResponse)
-async def get_movies(request: Request):
+async def get_movies(current_person: Annotated[str, Depends(get_current_person)], request: Request):
     with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
         with conn.cursor() as cur:
             cur.execute('''
@@ -32,16 +58,7 @@ async def get_movies(request: Request):
                             ORDER BY movie_name, release_date
                         ''')
             movies = cur.fetchall()
-            print(movies)
     return shared.templates.TemplateResponse(request=request, name="home.jinja", context={"movies": movies})
-
-@app.get("/login", response_class=HTMLResponse)
-def get_login(request: Request):
-    return shared.templates.TemplateResponse(request=request, name="login.jinja")
-
-@app.post("/login", response_class=HTMLResponse)
-async def attempt_login(data: Annotated[LoginFormData, Form()]):
-    print(data)
 
 app.include_router(genre.router)
 app.include_router(movie.router)
