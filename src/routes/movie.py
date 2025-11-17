@@ -1,11 +1,24 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Depends, Request
 from fastapi.responses import HTMLResponse
 import psycopg
 from psycopg.rows import dict_row
+from typing import Annotated
 
 from ..services import shared
 
 router = APIRouter()
+
+@router.get("/", response_class=HTMLResponse)
+async def get_movies(request: Request):
+    with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
+        with conn.cursor() as cur:
+            cur.execute('''
+                            SELECT movie_id, movie_name, EXTRACT(year FROM release_date) AS release_year
+                            FROM reviewer.movie
+                            ORDER BY movie_name, release_date
+                        ''')
+            movies = cur.fetchall()
+    return shared.templates.TemplateResponse(request=request, name="home.jinja", context={"movies": movies})
 
 @router.get("/movie/{movie_id}", response_class=HTMLResponse)
 async def get_movie(request: Request, movie_id: int):
