@@ -3,9 +3,10 @@ from dotenv import load_dotenv
 import logging
 import psycopg
 from fastapi.templating import Jinja2Templates
-from pwdlib import PasswordHash
+from pydantic import BaseModel
 from typing import Annotated
 from fastapi import Cookie, HTTPException, status
+from psycopg.rows import class_row
 
 # grab environment variables
 load_dotenv()
@@ -27,13 +28,23 @@ class LoggingCursor(psycopg.ClientCursor):
 templates = Jinja2Templates(directory="src/templates")
 
 # set up security
-password_hash = PasswordHash.recommended()
+class Current_Person(BaseModel):
+    person_id: int
+    person_name: str
+
 async def get_current_person(current_person_id: Annotated[str, Cookie()] = None):
     if not current_person_id:
         raise HTTPException(
             status_code=status.HTTP_303_SEE_OTHER,
             headers={'Location': '/login'}
         )
-    # TODO: grab user details
     else:
-        return current_person_id
+        with psycopg.connect(database_url, cursor_factory=LoggingCursor) as conn:
+            with conn.cursor(row_factory=class_row(Current_Person)) as cur:
+                cur.execute('''
+                                SELECT person_id, person_name
+                                FROM reviewer.person
+                                WHERE person_id = %s
+                            ''', (current_person_id, ))
+                current_person_details = cur.fetchone()
+        return current_person_details

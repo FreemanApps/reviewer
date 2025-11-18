@@ -2,11 +2,13 @@ from pydantic import BaseModel
 from fastapi import APIRouter, Request, Response, Form, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 from typing import Annotated
+import psycopg
+from psycopg.rows import dict_row
 
 from ..services import shared
 
 class LoginFormData(BaseModel):
-    email: str
+    email_address: str
     password: str
 
 router = APIRouter()
@@ -17,9 +19,16 @@ def get_login(request: Request):
 
 @router.post("/login", response_class=HTMLResponse)
 async def login(response: Response, form_data: Annotated[LoginFormData, Form()]):
-    # TODO: verify email and password, and set current_person_id
-    print(form_data)
+    with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
+        with conn.cursor(row_factory=dict_row) as cur:
+            cur.execute('''
+                            SELECT person_id, hashed_password
+                            FROM reviewer.person
+                            WHERE email_address = %s
+                        ''', (form_data.email_address,))
+            current_person_details = cur.fetchone()
 
-    response = RedirectResponse("/", status.HTTP_303_SEE_OTHER)
-    response.set_cookie(key="current_person_id", value=form_data.email)
-    return response
+    if form_data.password == current_person_details["hashed_password"]:
+        response = RedirectResponse("/", status.HTTP_303_SEE_OTHER)
+        response.set_cookie(key="current_person_id", value=current_person_details["person_id"])
+        return response
