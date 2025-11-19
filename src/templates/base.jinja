@@ -20,11 +20,21 @@
 					<ul>
 						<li><a href="{{ url_for('get_movies') }}"><img src="/public/logo.png" width="50" height="50"/></a></li>
 					</ul>
+					{% if current_person_id %}
 					<ul>
-						{% if current_person_id %}
-							<li><a href="{{ url_for('get_person', person_id=current_person_id) }}">User</a></li>
-						{% endif %}
+						<li>
+							<details class="dropdown">
+								<summary>
+									Account
+								</summary>
+								<ul dir="rtl">
+									<li><a href="{{ url_for('get_person', person_id=current_person_id) }}">Profile</a></li>
+									<li><a href="{{ url_for('get_current_person') }}">Settings</a></li>
+								</ul>
+							</details>
+						</li>
 					</ul>
+					{% endif %}
 				</nav>
 			</div>
 		</header>

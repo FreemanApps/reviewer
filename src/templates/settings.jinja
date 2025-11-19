@@ -1,0 +1,13 @@
+{% extends "base.jinja" %}
+{% block main %}
+<main class="container">
+    <h1>Settings</h1>
+    <section>
+        <h2>User Details</h2>
+        <div>
+            <p><strong>Username:</strong> {{ current_person_details["person_name"]|e }}</p>
+            <p><strong>Email Address:</strong> {{ current_person_details["email_address"]|e }}</p>
+        </div>
+    </section>
+</main>
+{% endblock %}
