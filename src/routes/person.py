@@ -8,12 +8,13 @@ from ..services import shared
 
 router = APIRouter()
 
+
 @router.get("/person/{person_id}", response_class=HTMLResponse)
-async def get_person(request: Request, person_id: int, current_person_details: Annotated[shared.Current_Person, Depends(shared.get_current_person)]):
+async def get_person(request: Request, person_id: int, current_person_id: Annotated[int, Depends(shared.get_current_person)]):
     with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
         with conn.cursor(row_factory=dict_row) as cur:
             cur.execute('''
-                            SELECT person_name
+                            SELECT person_id, person_name, email_address
                             FROM reviewer.person
                             WHERE person_id = %s
                         ''', (person_id,))
@@ -50,4 +51,38 @@ async def get_person(request: Request, person_id: int, current_person_details: A
                         ''', (person_id,))
             replies = cur.fetchall()
     
-    return shared.templates.TemplateResponse(request=request, name="person.jinja", context={"current_person_details": current_person_details, "person_details": person_details, "reviews": reviews, "replies": replies})
+    return shared.templates.TemplateResponse(request=request, name="person.jinja", context={"current_person_id": current_person_id, "person_details": person_details, "reviews": reviews, "replies": replies})
+
+@router.post("/person/{person_id}", response_class=HTMLResponse)
+async def update_person(person_id: int, current_person_id: Annotated[int, Depends(shared.get_current_person)]):
+    if person_id != current_person_id:
+        # TODO
+        print('bad')
+    else:
+        person_name = 'TODO'
+        email_address = 'TODO'
+        with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
+            with conn.cursor() as cur:
+                cur.execute('''
+                                UPDATE reviewer.person
+                                SET person_name = %s, email_address = %s
+                                WHERE person_id = %s
+                            ''', (person_name, email_address, person_id,))
+        # TODO
+        print('good')
+
+@router.delete("/person/{person_id}", response_class=HTMLResponse)
+async def delete_person(person_id: int, current_person_id: Annotated[int, Depends(shared.get_current_person)]):
+    if person_id != current_person_id:
+        # TODO
+        print('bad')
+    else:
+        with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
+            with conn.cursor() as cur:
+                cur.execute('''
+                                DELETE person_name
+                                FROM reviewer.person
+                                WHERE person_id = %s
+                            ''', (person_id,))
+        # TODO
+        print('good')

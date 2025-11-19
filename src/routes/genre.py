@@ -9,7 +9,7 @@ from ..services import shared
 router = APIRouter()
 
 @router.get("/genre/{genre_id}", response_class=HTMLResponse)
-async def get_genre(request: Request, genre_id: int, current_person_details: Annotated[shared.Current_Person, Depends(shared.get_current_person)]):
+async def get_genre(request: Request, genre_id: int, current_person_id: Annotated[int, Depends(shared.get_current_person)]):
     with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
         with conn.cursor(row_factory=dict_row) as cur:
             cur.execute('''
@@ -28,4 +28,4 @@ async def get_genre(request: Request, genre_id: int, current_person_details: Ann
                             ORDER BY m.movie_name
                         ''', (genre_id,))
             movies = cur.fetchall()
-    return shared.templates.TemplateResponse(request=request, name="genre.jinja", context={"current_person_details": current_person_details, "genre_details": genre_details, "movies": movies})
+    return shared.templates.TemplateResponse(request=request, name="genre.jinja", context={"current_person_id": current_person_id, "genre_details": genre_details, "movies": movies})

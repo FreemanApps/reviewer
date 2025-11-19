@@ -9,7 +9,7 @@ from ..services import shared
 router = APIRouter()
 
 @router.get("/", response_class=HTMLResponse)
-async def get_movies(request: Request, current_person_details: Annotated[shared.Current_Person, Depends(shared.get_current_person)]):
+async def get_movies(request: Request, current_person_id: Annotated[int, Depends(shared.get_current_person)]):
     with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
         with conn.cursor() as cur:
             cur.execute('''
@@ -18,10 +18,10 @@ async def get_movies(request: Request, current_person_details: Annotated[shared.
                             ORDER BY movie_name, release_date
                         ''')
             movies = cur.fetchall()
-    return shared.templates.TemplateResponse(request=request, name="home.jinja", context={"current_person_details": current_person_details, "movies": movies})
+    return shared.templates.TemplateResponse(request=request, name="home.jinja", context={"current_person_id": current_person_id, "movies": movies})
 
 @router.get("/movie/{movie_id}", response_class=HTMLResponse)
-async def get_movie(request: Request, movie_id: int, current_person_details: Annotated[shared.Current_Person, Depends(shared.get_current_person)]):
+async def get_movie(request: Request, movie_id: int, current_person_id: Annotated[int, Depends(shared.get_current_person)]):
     with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
         with conn.cursor(row_factory=dict_row) as cur:
             cur.execute('''
@@ -70,4 +70,4 @@ async def get_movie(request: Request, movie_id: int, current_person_details: Ann
                         ''', (movie_id,))
             reviews = cur.fetchall()
 
-    return shared.templates.TemplateResponse(request=request, name="movie.jinja", context={"current_person_details": current_person_details, "movie_details": movie_details, "workers": workers, "genres": genres, "reviews_details": reviews_details, "reviews": reviews})
+    return shared.templates.TemplateResponse(request=request, name="movie.jinja", context={"current_person_id": current_person_id, "movie_details": movie_details, "workers": workers, "genres": genres, "reviews_details": reviews_details, "reviews": reviews})

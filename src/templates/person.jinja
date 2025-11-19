@@ -2,6 +2,14 @@
 {% block main %}
 <main class="container">
     <h1>{{ person_details["person_name"]|e }}</h1>
+    {% if current_person_id == person_details["person_id"] %}
+    <section>
+        <h2>Private Details</h2>
+        <div class="grid">
+            <p><strong>Email Address:</strong> {{ person_details["email_address"] }}</p>
+        </div>
+    </section>
+    {% endif %}
     <section>
         <h2>Reviews</h2>
         {% if reviews %}

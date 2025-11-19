@@ -21,8 +21,8 @@
 						<li><a href="{{ url_for('get_movies') }}"><img src="/public/logo.png" width="50" height="50"/></a></li>
 					</ul>
 					<ul>
-						{% if current_person_details %}
-							<li><a href="{{ url_for('get_person', person_id=current_person_details['person_id']) }}">{{ current_person_details["person_name"] }}</a></li>
+						{% if current_person_id %}
+							<li><a href="{{ url_for('get_person', person_id=current_person_id) }}">User</a></li>
 						{% endif %}
 					</ul>
 				</nav>
