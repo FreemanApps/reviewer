@@ -17,7 +17,7 @@ router = APIRouter()
 def get_login(request: Request):
     return shared.templates.TemplateResponse(request=request, name="login.jinja")
 
-@router.post("/login", response_class=HTMLResponse)
+@router.post("/login")
 async def login(response: Response, form_data: Annotated[LoginFormData, Form()]):
     with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
         with conn.cursor(row_factory=dict_row) as cur:
@@ -32,3 +32,9 @@ async def login(response: Response, form_data: Annotated[LoginFormData, Form()])
         response = RedirectResponse("/", status.HTTP_303_SEE_OTHER)
         response.set_cookie(key="current_person_id", value=current_person_details["person_id"])
         return response
+
+@router.get("/logout")
+async def logout(response: Response):
+    response = RedirectResponse("/", status.HTTP_303_SEE_OTHER)
+    response.delete_cookie(key="current_person_id")
+    return response

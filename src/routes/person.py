@@ -1,13 +1,17 @@
-from fastapi import APIRouter, Depends, Request
-from fastapi.responses import HTMLResponse
+from pydantic import BaseModel
+from fastapi import APIRouter, Request, Depends, Form, status
+from fastapi.responses import HTMLResponse, RedirectResponse
 from typing import Annotated
 import psycopg
 from psycopg.rows import dict_row
 
 from ..services import shared
 
-router = APIRouter()
+class EditPersonFormData(BaseModel):
+    person_name: str
+    email_address: str
 
+router = APIRouter()
 
 @router.get("/person/{person_id}", response_class=HTMLResponse)
 async def get_person(request: Request, person_id: int, current_person_id: Annotated[int, Depends(shared.get_current_person)]):
@@ -63,12 +67,24 @@ async def get_current_person(request: Request, current_person_id: Annotated[int,
                             WHERE person_id = %s
                         ''', (current_person_id,))
             current_person_details = cur.fetchone()
-        return shared.templates.TemplateResponse(request=request, name="settings.jinja", context={"current_person_id": current_person_id, "current_person_details": current_person_details})
+    return shared.templates.TemplateResponse(request=request, name="settings.jinja", context={"current_person_id": current_person_id, "current_person_details": current_person_details})
 
-@router.post("/settings", response_class=HTMLResponse)
-async def update_current_person(current_person_id: Annotated[int, Depends(shared.get_current_person)]):
-    person_name = 'TODO'
-    email_address = 'TODO'
+@router.post("/edit-settings", response_class=HTMLResponse)
+async def update_current_person(request: Request, form_data: Annotated[EditPersonFormData, Form()], current_person_id: Annotated[int, Depends(shared.get_current_person)]):    
+    with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
+        with conn.cursor(row_factory=dict_row) as cur:
+            cur.execute('''
+                            SELECT person_name, email_address
+                            FROM reviewer.person
+                            WHERE person_id = %s
+                        ''', (current_person_id,))
+            current_person_details = cur.fetchone()
+    return shared.templates.TemplateResponse(request=request, name="settings-edit-user-form.jinja", context={"current_person_id": current_person_id, "current_person_details": current_person_details})
+
+@router.post("/save-settings", response_class=HTMLResponse)
+async def update_current_person(request: Request, form_data: Annotated[EditPersonFormData, Form()], current_person_id: Annotated[int, Depends(shared.get_current_person)]):
+    person_name = form_data.person_name
+    email_address = form_data.email_address
     with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
         with conn.cursor() as cur:
             cur.execute('''
@@ -76,15 +92,23 @@ async def update_current_person(current_person_id: Annotated[int, Depends(shared
                             SET person_name = %s, email_address = %s
                             WHERE person_id = %s
                         ''', (person_name, email_address, current_person_id,))
-    # TODO
+            
+    with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
+        with conn.cursor(row_factory=dict_row) as cur:
+            cur.execute('''
+                            SELECT person_name, email_address
+                            FROM reviewer.person
+                            WHERE person_id = %s
+                        ''', (current_person_id,))
+            current_person_details = cur.fetchone()
+    return shared.templates.TemplateResponse(request=request, name="settings-user-form.jinja", context={"current_person_id": current_person_id, "current_person_details": current_person_details})
 
-@router.delete("/settings", response_class=HTMLResponse)
+@router.delete("/settings")
 async def delete_current_person(current_person_id: Annotated[int, Depends(shared.get_current_person)]):
     with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
         with conn.cursor() as cur:
             cur.execute('''
-                            DELETE person_name
-                            FROM reviewer.person
+                            DELETE FROM reviewer.person
                             WHERE person_id = %s
                         ''', (current_person_id,))
-        # TODO
+    return RedirectResponse("/logout", status.HTTP_303_SEE_OTHER)

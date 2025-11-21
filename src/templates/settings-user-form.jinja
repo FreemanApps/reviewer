@@ -1,0 +1,16 @@
+<form hx-post="/edit-settings">
+    <fieldset>
+        <label>
+            Username
+            <input readonly type="text" name="person_name" value="{{ current_person_details['person_name']|e }}" autocomplete="username"/>
+        </label>
+        <label>
+            Email Address
+            <input readonly type="text" name="email_address" value="{{ current_person_details['email_address']|e }}" autocomplete="email"/>
+        </label>
+    </fieldset>
+    <div class="grid">
+    <button type="submit">Edit</button>
+    <button hx-delete="/settings" hx-target="body" hx-confirm="Are you sure you want to delete your account?" class="contrast" type="submit">Delete</button>
+    </div>
+</form>
