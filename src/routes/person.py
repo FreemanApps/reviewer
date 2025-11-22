@@ -69,8 +69,8 @@ async def get_current_person(request: Request, current_person_id: Annotated[int,
             current_person_details = cur.fetchone()
     return shared.templates.TemplateResponse(request=request, name="settings.jinja", context={"current_person_id": current_person_id, "current_person_details": current_person_details})
 
-@router.post("/edit-settings", response_class=HTMLResponse)
-async def update_current_person(request: Request, form_data: Annotated[EditPersonFormData, Form()], current_person_id: Annotated[int, Depends(shared.get_current_person)]):    
+@router.get("/edit-settings", response_class=HTMLResponse)
+async def get_editable_current_person(request: Request, current_person_id: Annotated[int, Depends(shared.get_current_person)]):    
     with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
         with conn.cursor(row_factory=dict_row) as cur:
             cur.execute('''
@@ -81,20 +81,20 @@ async def update_current_person(request: Request, form_data: Annotated[EditPerso
             current_person_details = cur.fetchone()
     return shared.templates.TemplateResponse(request=request, name="settings-edit-user-form.jinja", context={"current_person_id": current_person_id, "current_person_details": current_person_details})
 
-@router.post("/save-settings", response_class=HTMLResponse)
+@router.patch("/person/me", response_class=HTMLResponse)
 async def update_current_person(request: Request, form_data: Annotated[EditPersonFormData, Form()], current_person_id: Annotated[int, Depends(shared.get_current_person)]):
     person_name = form_data.person_name
     email_address = form_data.email_address
-    with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
-        with conn.cursor() as cur:
-            cur.execute('''
-                            UPDATE reviewer.person
-                            SET person_name = %s, email_address = %s
-                            WHERE person_id = %s
-                        ''', (person_name, email_address, current_person_id,))
-            
+    
     with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
         with conn.cursor(row_factory=dict_row) as cur:
+            with conn.transaction():
+                cur.execute('''
+                                UPDATE reviewer.person
+                                SET person_name = %s, email_address = %s
+                                WHERE person_id = %s
+                            ''', (person_name, email_address, current_person_id,))
+
             cur.execute('''
                             SELECT person_name, email_address
                             FROM reviewer.person
@@ -103,7 +103,7 @@ async def update_current_person(request: Request, form_data: Annotated[EditPerso
             current_person_details = cur.fetchone()
     return shared.templates.TemplateResponse(request=request, name="settings-user-form.jinja", context={"current_person_id": current_person_id, "current_person_details": current_person_details})
 
-@router.delete("/settings")
+@router.delete("/person/me")
 async def delete_current_person(current_person_id: Annotated[int, Depends(shared.get_current_person)]):
     with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
         with conn.cursor() as cur:

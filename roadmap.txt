@@ -1,8 +1,8 @@
-1. Add ability to like and dislike reviews - 11/19
-2. Add ability to like and dislike comments - 11/19
-3. Add ability to delete reviews, and comments - 11/21
-4. Add ability to add / update reviews, and comments - 11/21
-5. Convert queries with JOIN(s) into views - 11/23
-6. Improve authentication to use JWT - 11/23
-7. Add ability to generate interesting user statistics for the year - 11/23
-8. Add ability to add, update and delete movies, workers and genres - 11/30
+1. Add ability to like and dislike reviews - 11/22
+2. Add ability to like and dislike replies - 11/22
+3. Add ability to delete reviews, and replies - 11/23
+4. Add ability to add / update reviews, and replies - 11/23
+5. Convert queries with JOIN(s) into views - 11/28
+6. Improve authentication to use JWT - 11/28
+7. Add ability to generate interesting user statistics for the year - 11/30
+8. Add error handling and more - 12/6
