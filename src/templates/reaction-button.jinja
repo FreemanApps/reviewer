@@ -5,7 +5,7 @@
     </div>
 {% else %}
     <div class="grid">
-        <button hx-delete="/{{ object }}_reaction" hx-vals='{"{{ object }}_id": {{ object_id }}, "{{ object }}_reaction_type": "{{ reaction_type }}"}' class="secondary">{{ reaction_type | capitalize }}d</button>
+        <button hx-delete="/{{ object }}_reaction" hx-vals='{"{{ object }}_id": {{ object_id }}, "{{ object }}_reaction_type": "{{ reaction_type }}"}' hx-target="closest div" hx-swap="outerHTML" class="secondary">{{ reaction_type | capitalize }}d</button>
         <p><strong>{{ reaction_type | capitalize }}s:</strong> {{ reaction_count }}</p>
     </div>
 {% endif %}
