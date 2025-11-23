@@ -1,6 +1,5 @@
-1. Add ability to delete reviews, and replies - 11/23
-2. Add ability to add / update reviews, and replies - 11/23
-3. Convert queries with JOIN(s) into views - 11/28
-4. Improve authentication to use JWT - 11/28
-5. Add ability to generate interesting user statistics for the year - 11/30
-6. Add error handling and more - 12/6
+1. Add ability to add, delete and update reviews, and update delete replies - 11/23
+2. Convert queries with JOIN(s) into views - 11/28
+3. Improve authentication to use JWT - 11/28
+4. Add ability to generate interesting user statistics for the year - 11/30
+5. Add error handling and more - 12/6

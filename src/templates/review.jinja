@@ -21,25 +21,8 @@
             </footer>
         </article>
     </section>
-    <section>
-        <h2>Replies</h2>
-        {% for reply_id, reply_content, reply_date, person_id, person_name, has_liked, likes, has_disliked, dislikes in replies %}
-        <article>
-            <header class="grid">
-                <p><strong>User:</strong> <a href="{{ url_for('get_person', person_id=person_id) }}">{{ person_name|e }}</a></p>
-                <p><strong>Date:</strong> {{ reply_date }}</p>
-            </header>
-            {{ reply_content|e }}
-            <footer class="grid">
-                {% with has_reacted = has_liked, object = 'reply', object_id = reply_id, reaction_type = 'like', reaction_count = likes %}
-                    {% include 'reaction-button.jinja' %}
-                {% endwith %}
-                {% with has_reacted = has_disliked, object = 'reply', object_id = reply_id, reaction_type = 'dislike', reaction_count = dislikes %}
-                    {% include 'reaction-button.jinja' %}
-                {% endwith %}
-            </footer>
-        </article>
-        {% endfor %}
-    </section>
+    {% with review_id = review_details["review_id"] %}
+        {% include 'replies.jinja' %}
+    {% endwith %}
 </main>
 {% endblock %}

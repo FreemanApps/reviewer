@@ -1,4 +1,3 @@
-from pydantic import BaseModel
 from fastapi import APIRouter, Request, Depends
 from fastapi.responses import HTMLResponse
 from typing import Annotated
@@ -30,7 +29,7 @@ async def get_review(request: Request, review_id: int, current_person_id: Annota
                             LEFT OUTER JOIN reviewer.review_reaction rr ON r.review_id = rr.review_id
                             WHERE r.review_id = %(review_id)s
                             GROUP BY r.review_id, p.person_id
-                        ''', {"current_person_id": current_person_id, "review_id": review_id })
+                        ''', {"current_person_id": current_person_id, "review_id": review_id})
             review_details = cur.fetchone()
 
         with conn.cursor() as cur:
@@ -51,7 +50,7 @@ async def get_review(request: Request, review_id: int, current_person_id: Annota
                             WHERE r.review_id = %(review_id)s
                             GROUP BY r.reply_id, p.person_id
                             ORDER BY r.reply_timestamp                        
-                        ''', {"current_person_id": current_person_id, "review_id": review_id })
+                        ''', {"current_person_id": current_person_id, "review_id": review_id})
             replies = cur.fetchall()
     
     return shared.templates.TemplateResponse(request=request, name="review.jinja", context={"current_person_id": current_person_id, "review_details": review_details, "replies": replies})

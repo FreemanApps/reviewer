@@ -547,7 +547,7 @@ INSERT INTO reviewer.review (review_score, review_content, review_timestamp, per
 VALUES (7, 'Solid. I had a fun time', CURRENT_TIMESTAMP - INTERVAL '1 day 23 hours', 2, 2);
 
 INSERT INTO reviewer.review (review_score, review_content, review_timestamp, person_id, movie_id)
-VALUES (10, 'Amazing! Best move of the year', CURRENT_TIMESTAMP - INTERVAL '1 day 12 hours', 4, 1);
+VALUES (10, 'Amazing! Best movie of the year', CURRENT_TIMESTAMP - INTERVAL '1 day 12 hours', 4, 1);
 
 INSERT INTO reviewer.review_reaction (review_reaction_type, person_id, review_id)
 VALUES ('dislike', 4, 2);
