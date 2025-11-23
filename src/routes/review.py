@@ -49,7 +49,7 @@ async def get_review(request: Request, review_id: int, current_person_id: Annota
                             LEFT OUTER JOIN reviewer.reply_reaction rr ON r.reply_id = rr.reply_id
                             WHERE r.review_id = %(review_id)s
                             GROUP BY r.reply_id, p.person_id
-                            ORDER BY r.reply_timestamp                        
+                            ORDER BY r.reply_timestamp
                         ''', {"current_person_id": current_person_id, "review_id": review_id})
             replies = cur.fetchall()
     
