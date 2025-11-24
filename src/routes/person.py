@@ -67,7 +67,7 @@ async def get_current_person(request: Request, current_person_id: Annotated[int,
                             WHERE person_id = %s
                         ''', (current_person_id,))
             current_person_details = cur.fetchone()
-    return shared.templates.TemplateResponse(request=request, name="settings.jinja", context={"current_person_id": current_person_id, "current_person_details": current_person_details})
+    return shared.templates.TemplateResponse(request=request, name="settings/settings.jinja", context={"current_person_id": current_person_id, "current_person_details": current_person_details})
 
 @router.get("/edit-settings", response_class=HTMLResponse)
 async def get_editable_current_person(request: Request, current_person_id: Annotated[int, Depends(shared.get_current_person)]):    
@@ -79,7 +79,7 @@ async def get_editable_current_person(request: Request, current_person_id: Annot
                             WHERE person_id = %s
                         ''', (current_person_id,))
             current_person_details = cur.fetchone()
-    return shared.templates.TemplateResponse(request=request, name="settings-edit-user-form.jinja", context={"current_person_id": current_person_id, "current_person_details": current_person_details})
+    return shared.templates.TemplateResponse(request=request, name="settings/edit-user-form.jinja", context={"current_person_id": current_person_id, "current_person_details": current_person_details})
 
 @router.patch("/person/me", response_class=HTMLResponse)
 async def update_current_person(request: Request, form_data: Annotated[EditPersonFormData, Form()], current_person_id: Annotated[int, Depends(shared.get_current_person)]):
@@ -101,7 +101,7 @@ async def update_current_person(request: Request, form_data: Annotated[EditPerso
                             WHERE person_id = %s
                         ''', (current_person_id,))
             current_person_details = cur.fetchone()
-    return shared.templates.TemplateResponse(request=request, name="settings-user-form.jinja", context={"current_person_id": current_person_id, "current_person_details": current_person_details})
+    return shared.templates.TemplateResponse(request=request, name="settings/user-form.jinja", context={"current_person_id": current_person_id, "current_person_details": current_person_details})
 
 @router.delete("/person/me")
 async def delete_current_person(current_person_id: Annotated[int, Depends(shared.get_current_person)]):

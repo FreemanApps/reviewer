@@ -51,7 +51,7 @@ async def create_reply(request: Request, form_data: Annotated[NewReplyFormData, 
                         ''', {"current_person_id": current_person_id, "review_id": review_id})
             replies = cur.fetchall()
                 
-    return shared.templates.TemplateResponse(request=request, name="replies.jinja", context={"current_person_id": current_person_id, "replies": replies, "review_id": review_id})
+    return shared.templates.TemplateResponse(request=request, name="review/replies-section.jinja", context={"current_person_id": current_person_id, "replies": replies, "review_id": review_id})
 
 @router.get("/edit-reply", response_class=HTMLResponse)
 async def get_editable_reply(request: Request, reply_id: int, review_id: int, current_person_id: Annotated[int, Depends(shared.get_current_person)]):
@@ -64,7 +64,7 @@ async def get_editable_reply(request: Request, reply_id: int, review_id: int, cu
                         ''', (reply_id,))
             reply_details = cur.fetchone()    
                 
-    return shared.templates.TemplateResponse(request=request, name="replies-edit-reply-form.jinja", context={"current_person_id": current_person_id, "reply_id": reply_id, "review_id": review_id, "reply_details": reply_details})
+    return shared.templates.TemplateResponse(request=request, name="review/edit-reply-form.jinja", context={"current_person_id": current_person_id, "reply_id": reply_id, "review_id": review_id, "reply_details": reply_details})
 
 @router.patch("/reply", response_class=HTMLResponse)
 async def update_reply(request: Request, form_data: Annotated[CurrentReplyFormData, Form()], current_person_id: Annotated[int, Depends(shared.get_current_person)]):
@@ -110,7 +110,7 @@ async def update_reply(request: Request, form_data: Annotated[CurrentReplyFormDa
                         ''', {"current_person_id": current_person_id, "review_id": review_id})
             replies = cur.fetchall()
                 
-    return shared.templates.TemplateResponse(request=request, name="replies.jinja", context={"current_person_id": current_person_id, "replies": replies, "review_id": review_id})
+    return shared.templates.TemplateResponse(request=request, name="review/replies-section.jinja", context={"current_person_id": current_person_id, "replies": replies, "review_id": review_id})
 
 @router.delete("/reply", response_class=HTMLResponse)
 async def delete_reply(request: Request, reply_id: int, review_id: int, current_person_id: Annotated[int, Depends(shared.get_current_person)]):
@@ -151,4 +151,4 @@ async def delete_reply(request: Request, reply_id: int, review_id: int, current_
                         ''', {"current_person_id": current_person_id, "review_id": review_id})
             replies = cur.fetchall()
                 
-    return shared.templates.TemplateResponse(request=request, name="replies.jinja", context={"current_person_id": current_person_id, "replies": replies, "review_id": review_id})       
+    return shared.templates.TemplateResponse(request=request, name="review/replies-section.jinja", context={"current_person_id": current_person_id, "replies": replies, "review_id": review_id})

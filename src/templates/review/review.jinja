@@ -1,0 +1,10 @@
+{% extends "base.jinja" %}
+{% block main %}
+<main class="container">
+    <h1>Review</h1>
+    {% include 'review/review-section.jinja' %}
+    {% with review_id = review_details["review_id"] %}
+        {% include 'review/replies-section.jinja' %}
+    {% endwith %}
+</main>
+{% endblock %}

@@ -49,7 +49,7 @@ async def create_review_reaction(request: Request, form_data: Annotated[ReviewRe
                         ''', {"review_reaction_type": review_reaction_type, "current_person_id": current_person_id, "review_id": review_id })
             review_details = cur.fetchone()
     
-    return shared.templates.TemplateResponse(request=request, name="reaction-button.jinja", context={"current_person_id": current_person_id, "has_reacted": review_details["has_reacted"], "object": 'review', "object_id": review_id, "reaction_type": review_reaction_type, "reaction_count": review_details["reaction_count"]})
+    return shared.templates.TemplateResponse(request=request, name="review/reaction-button.jinja", context={"current_person_id": current_person_id, "has_reacted": review_details["has_reacted"], "object": 'review', "object_id": review_id, "reaction_type": review_reaction_type, "reaction_count": review_details["reaction_count"]})
 
 @router.delete("/review_reaction", response_class=HTMLResponse)
 async def delete_review_reaction(request: Request, review_id: int, review_reaction_type: str, current_person_id: Annotated[int, Depends(shared.get_current_person)]):
@@ -82,7 +82,7 @@ async def delete_review_reaction(request: Request, review_id: int, review_reacti
                         ''', {"review_reaction_type": review_reaction_type, "current_person_id": current_person_id, "review_id": review_id })
             review_details = cur.fetchone()
     
-    return shared.templates.TemplateResponse(request=request, name="reaction-button.jinja", context={"current_person_id": current_person_id, "has_reacted": review_details["has_reacted"], "object": 'review', "object_id": review_id, "reaction_type": review_reaction_type, "reaction_count": review_details["reaction_count"]})
+    return shared.templates.TemplateResponse(request=request, name="review/reaction-button.jinja", context={"current_person_id": current_person_id, "has_reacted": review_details["has_reacted"], "object": 'review', "object_id": review_id, "reaction_type": review_reaction_type, "reaction_count": review_details["reaction_count"]})
 
 @router.post("/reply_reaction", response_class=HTMLResponse)
 async def create_reply_reaction(request: Request, form_data: Annotated[ReplyReactionFormData, Form()], current_person_id: Annotated[int, Depends(shared.get_current_person)]):
@@ -116,7 +116,7 @@ async def create_reply_reaction(request: Request, form_data: Annotated[ReplyReac
                             ''', {"reply_reaction_type": reply_reaction_type, "current_person_id": current_person_id, "reply_id": reply_id })
                 reply_details = cur.fetchone()
 
-    return shared.templates.TemplateResponse(request=request, name="reaction-button.jinja", context={"current_person_id": current_person_id, "has_reacted": reply_details["has_reacted"], "object": 'reply', "object_id": reply_id, "reaction_type": reply_reaction_type, "reaction_count": reply_details["reaction_count"]})
+    return shared.templates.TemplateResponse(request=request, name="review/reaction-button.jinja", context={"current_person_id": current_person_id, "has_reacted": reply_details["has_reacted"], "object": 'reply', "object_id": reply_id, "reaction_type": reply_reaction_type, "reaction_count": reply_details["reaction_count"]})
 
 @router.delete("/reply_reaction", response_class=HTMLResponse)
 async def delete_reply_reaction(request: Request, reply_id: int, reply_reaction_type: str, current_person_id: Annotated[int, Depends(shared.get_current_person)]):
@@ -149,4 +149,4 @@ async def delete_reply_reaction(request: Request, reply_id: int, reply_reaction_
                             ''', {"reply_reaction_type": reply_reaction_type, "current_person_id": current_person_id, "reply_id": reply_id })
                 reply_details = cur.fetchone()
 
-    return shared.templates.TemplateResponse(request=request, name="reaction-button.jinja", context={"current_person_id": current_person_id, "has_reacted": reply_details["has_reacted"], "object": 'reply', "object_id": reply_id, "reaction_type": reply_reaction_type, "reaction_count": reply_details["reaction_count"]})
+    return shared.templates.TemplateResponse(request=request, name="review/reaction-button.jinja", context={"current_person_id": current_person_id, "has_reacted": reply_details["has_reacted"], "object": 'reply', "object_id": reply_id, "reaction_type": reply_reaction_type, "reaction_count": reply_details["reaction_count"]})
