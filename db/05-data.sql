@@ -526,16 +526,16 @@ INSERT INTO reviewer.movie_genre_bridge (movie_id, genre_id)
 VALUES (13, 5);
 
 INSERT INTO reviewer.person (person_name, email_address, hashed_password)
-VALUES ('White Cat', 'whitecat@gmail.com', 'placeholder');
+VALUES ('White Cat', 'whitecat@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$1N2rjz9e1/OVaPENfJFTXA$og654YPv3+njL27g0aLggny+NPQeosI/klklyq5PUfY');
 
 INSERT INTO reviewer.person (person_name, email_address, hashed_password)
-VALUES ('Potato Eel', 'potatoeel@hotmail.com', 'placeholder');
+VALUES ('Potato Eel', 'potatoeel@hotmail.com', '$argon2id$v=19$m=65536,t=3,p=4$WtVu+tpN5RFfVaylR8rcFw$7lSDBVrdEWzqQrlvIoDRBTi3IBfQTGMtu44vPYUs6KM');
 
 INSERT INTO reviewer.person (person_name, email_address, hashed_password)
-VALUES ('Reviewer In the Woods', 'reviewinthewoods@yahoo.com', 'placeholder');
+VALUES ('Reviewer in the Woods', 'reviewinthewoods@yahoo.com', '$argon2id$v=19$m=65536,t=3,p=4$kc1VeMcRlCQZ8TnYcrJy1Q$oyXR4fvudLUkFtl5ipFumvItv/Q+ZE1w11IL4Gh+mZA');
 
 INSERT INTO reviewer.person (person_name, email_address, hashed_password)
-VALUES ('My Pet Seel Reviews', 'mypetseelreviews@gmail.com', 'placeholder');
+VALUES ('My Pet Seel Reviews', 'mypetseelreviews@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$R+ZZ91nBtzeXEPmHEKiV+Q$TAZjG+28XztVzDY6TsfMc0eLEu52oDrCcm/uitXPL7E');
 
 INSERT INTO reviewer.review (review_score, review_content, review_timestamp, person_id, movie_id)
 VALUES (8, 'Pretty good!', CURRENT_TIMESTAMP - INTERVAL '3 days', 1, 4);
