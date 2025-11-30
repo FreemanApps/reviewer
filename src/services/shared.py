@@ -37,7 +37,7 @@ async def get_current_person(token: Annotated[str, Cookie()] = None, hx_request:
         if hx_request:
             raise HTTPException(
                 status_code=status.HTTP_200_OK,
-                headers={'HX-Redirect': '/login'}
+                headers={'HX-Location': '/login'}
             )
         else:
             raise HTTPException(
@@ -50,7 +50,7 @@ async def get_current_person(token: Annotated[str, Cookie()] = None, hx_request:
         if hx_request:
             raise HTTPException(
                 status_code=status.HTTP_200_OK,
-                headers={'HX-Redirect': '/login'}
+                headers={'HX-Location': '/login'}
             )
         else:
             raise HTTPException(

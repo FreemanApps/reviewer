@@ -112,10 +112,17 @@ async def update_reply(request: Request, form_data: Annotated[CurrentReplyFormDa
                 
     return shared.templates.TemplateResponse(request=request, name="review/replies-section.jinja", context={"current_person_id": current_person_id, "replies": replies, "review_id": review_id})
 
-@router.delete("/reply", response_class=HTMLResponse)
-async def delete_reply(request: Request, reply_id: int, review_id: int, current_person_id: Annotated[int, Depends(shared.get_current_person)]):
+@router.delete("/reply/{reply_id}", response_class=HTMLResponse)
+async def delete_reply(request: Request, reply_id: int, current_person_id: Annotated[int, Depends(shared.get_current_person)]):
     with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
         with conn.cursor() as cur:
+            cur.execute('''
+                            SELECT review_id
+                            FROM reviewer.reply
+                            WHERE reply_id = %s
+                        ''', (reply_id,))
+            review_id = cur.fetchone()[0]
+
             cur.execute('''
                             SELECT COUNT(*) AS owns_reply
                             FROM reviewer.reply

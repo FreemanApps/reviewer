@@ -529,7 +529,7 @@ INSERT INTO reviewer.person (person_name, email_address, hashed_password)
 VALUES ('White Cat', 'whitecat@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$1N2rjz9e1/OVaPENfJFTXA$og654YPv3+njL27g0aLggny+NPQeosI/klklyq5PUfY');
 
 INSERT INTO reviewer.person (person_name, email_address, hashed_password)
-VALUES ('Potato Eel', 'potatoeel@hotmail.com', '$argon2id$v=19$m=65536,t=3,p=4$WtVu+tpN5RFfVaylR8rcFw$7lSDBVrdEWzqQrlvIoDRBTi3IBfQTGMtu44vPYUs6KM');
+VALUES ('Black Dog', 'blackdog@hotmail.com', '$argon2id$v=19$m=65536,t=3,p=4$WtVu+tpN5RFfVaylR8rcFw$7lSDBVrdEWzqQrlvIoDRBTi3IBfQTGMtu44vPYUs6KM');
 
 INSERT INTO reviewer.person (person_name, email_address, hashed_password)
 VALUES ('Reviewer in the Woods', 'reviewinthewoods@yahoo.com', '$argon2id$v=19$m=65536,t=3,p=4$kc1VeMcRlCQZ8TnYcrJy1Q$oyXR4fvudLUkFtl5ipFumvItv/Q+ZE1w11IL4Gh+mZA');
@@ -577,7 +577,7 @@ INSERT INTO reviewer.reply (reply_content, reply_timestamp, person_id, review_id
 VALUES ('Who are you?', CURRENT_TIMESTAMP - INTERVAL '22 hours', 4, 2);
 
 INSERT INTO reviewer.reply (reply_content, reply_timestamp, person_id, review_id)
-VALUES ('Potato Eel is cancer', CURRENT_TIMESTAMP - INTERVAL '21 hours', 1, 2);
+VALUES ('Black Dog is an awful person', CURRENT_TIMESTAMP - INTERVAL '21 hours', 1, 2);
 
 INSERT INTO reviewer.reply (reply_content, reply_timestamp, person_id, review_id)
 VALUES ('Yeah, I thought this was the best as well!', CURRENT_TIMESTAMP - INTERVAL '20 hours', 3, 4);

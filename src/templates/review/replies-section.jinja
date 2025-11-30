@@ -11,7 +11,7 @@
             {% if current_person_id == person_id %}
                 <div>
                     <button hx-get="/edit-reply" hx-vals='{"reply_id": {{ reply_id }}, "review_id": {{ review_id }}}' hx-target="#reply-{{ reply_id }}-body" hx-swap="outerHTML" class="primary">Edit</button>
-                    <button hx-delete="/reply" hx-vals='{"reply_id": {{ reply_id }}, "review_id": {{ review_id }}}' hx-target="closest section" hx-swap="outerHTML" hx-confirm="Are you sure you want to delete this reply?" class="contrast">Delete</button>
+                    <button hx-delete="/reply/{{ reply_id }}" hx-target="closest section" hx-swap="outerHTML" hx-confirm="Are you sure you want to delete this reply?" class="contrast">Delete</button>
                 </div>
             {% endif %}
         </div>
