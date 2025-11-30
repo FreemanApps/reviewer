@@ -62,7 +62,7 @@ async def get_editable_reply(request: Request, reply_id: int, review_id: int, cu
                             FROM reviewer.reply
                             WHERE reply_id = %s
                         ''', (reply_id,))
-            reply_details = cur.fetchone()    
+            reply_details = cur.fetchone()
                 
     return shared.templates.TemplateResponse(request=request, name="review/edit-reply-form.jinja", context={"current_person_id": current_person_id, "reply_id": reply_id, "review_id": review_id, "reply_details": reply_details})
 
@@ -85,7 +85,7 @@ async def update_reply(request: Request, form_data: Annotated[CurrentReplyFormDa
             if owns_reply:
                 with conn.transaction():
                     cur.execute('''
-                                    UPDATE reviewer.reply 
+                                    UPDATE reviewer.reply
                                     SET reply_content = %s
                                     WHERE reply_id = %s
                                 ''', (reply_content, reply_id,))

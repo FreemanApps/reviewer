@@ -4,7 +4,7 @@ import logging
 import psycopg
 from fastapi.templating import Jinja2Templates
 from typing import Annotated
-from fastapi import Cookie, HTTPException, status
+from fastapi import Cookie, Header, HTTPException, status
 import jwt
 
 # grab environment variables
@@ -30,20 +30,32 @@ class LoggingCursor(psycopg.ClientCursor):
 templates = Jinja2Templates(directory="src/templates", autoescape=False)
 
 # set up security dependency
-async def get_current_person(token: Annotated[str, Cookie()] = None):
+async def get_current_person(token: Annotated[str, Cookie()] = None, hx_request: Annotated[str | None, Header()] = None):
     try:
         payload = jwt.decode(token, jwt_secret_key, algorithms=[jwt_algorithm])
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_303_SEE_OTHER,
-            headers={'Location': '/login'}
-        )
+    except:
+        if hx_request:
+            raise HTTPException(
+                status_code=status.HTTP_200_OK,
+                headers={'HX-Redirect': '/login'}
+            )
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_303_SEE_OTHER,
+                headers={'Location': '/login'}
+            )
 
     current_person_id = int(payload["sub"])
     if not current_person_id:
-        raise HTTPException(
-            status_code=status.HTTP_303_SEE_OTHER,
-            headers={'Location': '/login'}
-        )
+        if hx_request:
+            raise HTTPException(
+                status_code=status.HTTP_200_OK,
+                headers={'HX-Redirect': '/login'}
+            )
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_303_SEE_OTHER,
+                headers={'Location': '/login'}
+            )
     else:
         return current_person_id
