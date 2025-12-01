@@ -29,6 +29,7 @@
     <section>
         <h2>Reviews</h2>
         <p><strong>Average Rating:</strong> {% if reviews_details["average_review_score"] %}{{ reviews_details["average_review_score"] }}{% else %}N/A{% endif %}</p>
+        <p><button hx-get="/movie/{{ movie_details['movie_id'] }}/review/new" hx-target="body" hx-push-url="true" hx-swap="outerHTML" class="primary">Add Review</button></p>
         {% if reviews %}
         <ul>
             {% for review_id, review_score, review_date, reviewer in reviews %}

@@ -28,7 +28,7 @@ async def create_reply(request: Request, form_data: Annotated[NewReplyFormData, 
             with conn.transaction():
                 cur.execute('''
                                 INSERT INTO reviewer.reply (reply_content, person_id, review_id)
-                                VALUES (%s, %s, %s) 
+                                VALUES (%s, %s, %s)
                             ''', (reply_content, current_person_id, review_id,))
                 
             cur.execute('''

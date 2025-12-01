@@ -25,7 +25,7 @@ async def get_movie(request: Request, movie_id: int, current_person_id: Annotate
     with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
         with conn.cursor(row_factory=dict_row) as cur:
             cur.execute('''
-                            SELECT movie_name, TO_CHAR(release_date, 'DD Mon YYYY') AS release_year
+                            SELECT movie_id, movie_name, TO_CHAR(release_date, 'DD Mon YYYY') AS release_year
                             FROM reviewer.movie
                             WHERE movie_id = %s
                         ''', (movie_id,))
