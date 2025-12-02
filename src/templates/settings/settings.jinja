@@ -2,9 +2,6 @@
 {% block main %}
 <main class="container">
     <h1>Settings</h1>
-    <section>
-        <h2>User Details</h2>
-        {% include 'settings/user-form.jinja' %}
-    </section>
+    {% include 'settings/user-settings.jinja' %}
 </main>
 {% endblock %}

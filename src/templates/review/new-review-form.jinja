@@ -2,7 +2,7 @@
 {% block main %}
 <main class="container">
     <h1>New Review</h1>
-    <form hx-post="/movie/{{ movie_id }}/review" hx-target="body" hx-push-url="true" hx-swap="outerHTML">
+    <form hx-post="{{ url_for('create_review', movie_id=movie_id) }}" hx-target="body" hx-push-url="true" hx-swap="outerHTML">
         <textarea name="review_content" placeholder="Add a review"></textarea>
         <label><strong>Score:</strong><input type="number" name="review_score"></label>
         <button type="submit" class="primary">Add</button>

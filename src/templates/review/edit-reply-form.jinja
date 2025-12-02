@@ -1,4 +1,4 @@
-<form hx-patch="/reply" hx-vals='{"reply_id": {{ reply_id }}, "review_id": {{ review_id }}}' hx-target="closest section" hx-swap="outerHTML">
+<form hx-patch="{{ url_for('update_reply', movie_id=movie_id, review_id=review_id, reply_id=reply_id) }}" hx-target="closest section" hx-swap="outerHTML">
     <fieldset role="group">
         <textarea name="reply_content">{{ reply_details["reply_content"]|e }}</textarea>
         <button type="submit" class="primary">Save</button>

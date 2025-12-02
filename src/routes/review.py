@@ -7,12 +7,7 @@ from psycopg.rows import dict_row
 
 from ..services import shared
 
-class NewReviewFormData(BaseModel):
-    review_score: int
-    review_content: str
-
-class CurrentReviewFormData(BaseModel):
-    review_id: int
+class ReviewFormData(BaseModel):
     review_score: int
     review_content: str
 
@@ -23,7 +18,7 @@ async def get_new_review_form(request: Request, movie_id: int, current_person_id
     return shared.templates.TemplateResponse(request=request, name="review/new-review-form.jinja", context={"current_person_id": current_person_id, "movie_id": movie_id})
 
 @router.post("/movie/{movie_id}/review")
-async def create_review( movie_id: int, form_data: Annotated[NewReviewFormData, Form()], current_person_id: Annotated[int, Depends(shared.get_current_person)]):
+async def create_review(request: Request, movie_id: int, form_data: Annotated[ReviewFormData, Form()], current_person_id: Annotated[int, Depends(shared.get_current_person)]):
     review_content = form_data.review_content
     review_score = form_data.review_score
 
@@ -37,12 +32,13 @@ async def create_review( movie_id: int, form_data: Annotated[NewReviewFormData, 
                             ''', (review_score, review_content, current_person_id, movie_id,))
                 review_id = str(cur.fetchone()[0])
 
-    response = RedirectResponse("/review/" + review_id, status.HTTP_303_SEE_OTHER)
+    url = request.url_for("get_review", movie_id=movie_id, review_id=review_id)
+    response = RedirectResponse(url, status.HTTP_303_SEE_OTHER)
     return response
 
 
-@router.get("/review/{review_id}", response_class=HTMLResponse)
-async def get_review(request: Request, review_id: int, current_person_id: Annotated[int, Depends(shared.get_current_person)]):
+@router.get("/movie/{movie_id}/review/{review_id}", response_class=HTMLResponse)
+async def get_review(request: Request, movie_id: int, review_id: int, current_person_id: Annotated[int, Depends(shared.get_current_person)]):
     with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
         with conn.cursor(row_factory=dict_row) as cur:
             cur.execute('''
@@ -86,10 +82,10 @@ async def get_review(request: Request, review_id: int, current_person_id: Annota
                         ''', {"current_person_id": current_person_id, "review_id": review_id})
             replies = cur.fetchall()
     
-    return shared.templates.TemplateResponse(request=request, name="review/review.jinja", context={"current_person_id": current_person_id, "review_details": review_details, "replies": replies})
+    return shared.templates.TemplateResponse(request=request, name="review/review.jinja", context={"current_person_id": current_person_id, "movie_id": movie_id, "review_details": review_details, "replies": replies})
 
-@router.get("/edit-review", response_class=HTMLResponse)
-async def get_editable_review(request: Request, review_id: int, current_person_id: Annotated[int, Depends(shared.get_current_person)]):
+@router.get("/movie/{movie_id}/review/{review_id}/edit", response_class=HTMLResponse)
+async def get_editable_review(request: Request, movie_id: int, review_id: int, current_person_id: Annotated[int, Depends(shared.get_current_person)]):
     with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
         with conn.cursor(row_factory=dict_row) as cur:
             cur.execute('''
@@ -99,11 +95,10 @@ async def get_editable_review(request: Request, review_id: int, current_person_i
                         ''', (review_id,))
             review_details = cur.fetchone()
                 
-    return shared.templates.TemplateResponse(request=request, name="review/edit-review-form.jinja", context={"current_person_id": current_person_id, "review_id": review_id, "review_details": review_details})
+    return shared.templates.TemplateResponse(request=request, name="review/edit-review-form.jinja", context={"current_person_id": current_person_id, "movie_id": movie_id, "review_id": review_id, "review_details": review_details})
 
-@router.patch("/review", response_class=HTMLResponse)
-async def update_review(request: Request, form_data: Annotated[CurrentReviewFormData, Form()], current_person_id: Annotated[int, Depends(shared.get_current_person)]):
-    review_id = form_data.review_id
+@router.patch("/movie/{movie_id}/review/{review_id}", response_class=HTMLResponse)
+async def update_review(request: Request, movie_id: int, review_id: int, form_data: Annotated[ReviewFormData, Form()], current_person_id: Annotated[int, Depends(shared.get_current_person)]):
     review_score = form_data.review_score
     review_content = form_data.review_content
 
@@ -146,10 +141,10 @@ async def update_review(request: Request, form_data: Annotated[CurrentReviewForm
                         ''', {"current_person_id": current_person_id, "review_id": review_id})
             review_details = cur.fetchone()
                 
-    return shared.templates.TemplateResponse(request=request, name="review/review-section.jinja", context={"current_person_id": current_person_id, "review_details": review_details})
+    return shared.templates.TemplateResponse(request=request, name="review/review-section.jinja", context={"current_person_id": current_person_id, "movie_id": movie_id, "review_details": review_details})
 
-@router.delete("/review/{review_id}")
-async def delete_review(review_id: int, current_person_id: Annotated[int, Depends(shared.get_current_person)]):
+@router.delete("/movie/{movie_id}/review/{review_id}")
+async def delete_review(request: Request, review_id: int, current_person_id: Annotated[int, Depends(shared.get_current_person)]):
     with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
         with conn.cursor() as cur:
             cur.execute('''
@@ -166,6 +161,7 @@ async def delete_review(review_id: int, current_person_id: Annotated[int, Depend
                                     DELETE FROM reviewer.review
                                     WHERE review_id = %s
                                 ''', (review_id,))
-                
-    response = RedirectResponse("/", status.HTTP_303_SEE_OTHER)
+
+    url = request.url_for("get_movies")
+    response = RedirectResponse(url, status.HTTP_303_SEE_OTHER)
     return response

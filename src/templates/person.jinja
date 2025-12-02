@@ -14,9 +14,9 @@
         <h2>Reviews</h2>
         {% if reviews %}
         <ul>
-            {% for review_id, review_score, review_date, movie_name in reviews %}
+            {% for review_id, review_score, review_date, movie_id, movie_name in reviews %}
             <li>
-                <a href="{{ url_for('get_review', review_id=review_id) }}">{{ review_score }} for {{ movie_name|e }} on {{ review_date }}</a>
+                <a href="{{ url_for('get_review', movie_id=movie_id, review_id=review_id) }}">{{ review_score }} for {{ movie_name|e }} on {{ review_date }}</a>
             </li>
             {% endfor %}
         </ul>
@@ -28,9 +28,9 @@
         <h2>Replies</h2>
         {% if replies %}
         <ul>
-            {% for reply_date, review_id, review_score, review_date, reviewer, movie_name in replies %}
+            {% for reply_date, review_id, review_score, review_date, reviewer, movie_id, movie_name in replies %}
             <li>
-                <a href="{{ url_for('get_review', review_id=review_id) }}">Reply on {{ reply_date }} to {{ review_score }} from {{ reviewer|e }} for {{ movie_name|e }} on {{ review_date }}</a>
+                <a href="{{ url_for('get_review', movie_id=movie_id, review_id=review_id) }}">Reply on {{ reply_date }} to {{ review_score }} from {{ reviewer|e }} for {{ movie_name|e }} on {{ review_date }}</a>
             </li>
             {% endfor %}
         </ul>

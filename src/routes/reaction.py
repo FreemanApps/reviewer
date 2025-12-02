@@ -7,20 +7,14 @@ from psycopg.rows import dict_row
 
 from ..services import shared
 
-class ReviewReactionFormData(BaseModel):
-    review_id: int
-    review_reaction_type: str
-
-class ReplyReactionFormData(BaseModel):
-    reply_id: int
-    reply_reaction_type: str
+class ReactionFormData(BaseModel):
+    reaction_type: str
 
 router = APIRouter()
 
-@router.post("/review_reaction", response_class=HTMLResponse)
-async def create_review_reaction(request: Request, form_data: Annotated[ReviewReactionFormData, Form()], current_person_id: Annotated[int, Depends(shared.get_current_person)]):
-    review_id = form_data.review_id
-    review_reaction_type = form_data.review_reaction_type
+@router.post("/movie/{movie_id}/review/{review_id}/react", response_class=HTMLResponse)
+async def create_review_reaction(request: Request, movie_id: int, review_id: int, form_data: Annotated[ReactionFormData, Form()], current_person_id: Annotated[int, Depends(shared.get_current_person)]):
+    review_reaction_type = form_data.reaction_type
 
     with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
         with conn.cursor(row_factory=dict_row) as cur:
@@ -49,10 +43,13 @@ async def create_review_reaction(request: Request, form_data: Annotated[ReviewRe
                         ''', {"review_reaction_type": review_reaction_type, "current_person_id": current_person_id, "review_id": review_id })
             review_details = cur.fetchone()
     
-    return shared.templates.TemplateResponse(request=request, name="review/reaction-button.jinja", context={"current_person_id": current_person_id, "has_reacted": review_details["has_reacted"], "object": 'review', "object_id": review_id, "reaction_type": review_reaction_type, "reaction_count": review_details["reaction_count"]})
+    url = request.url_for("delete_review_reaction", movie_id=movie_id, review_id=review_id)
+    return shared.templates.TemplateResponse(request=request, name="review/reaction-button.jinja", context={"current_person_id": current_person_id, "has_reacted": review_details["has_reacted"], "url": url, "reaction_type": review_reaction_type, "reaction_count": review_details["reaction_count"]})
 
-@router.delete("/review_reaction", response_class=HTMLResponse)
-async def delete_review_reaction(request: Request, review_id: int, review_reaction_type: str, current_person_id: Annotated[int, Depends(shared.get_current_person)]):
+@router.delete("/movie/{movie_id}/review/{review_id}/react", response_class=HTMLResponse)
+async def delete_review_reaction(request: Request, movie_id: int, review_id: int, reaction_type: str, current_person_id: Annotated[int, Depends(shared.get_current_person)]):
+    review_reaction_type = reaction_type
+
     with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
         with conn.cursor(row_factory=dict_row) as cur:
             cur.execute('''
@@ -82,12 +79,12 @@ async def delete_review_reaction(request: Request, review_id: int, review_reacti
                         ''', {"review_reaction_type": review_reaction_type, "current_person_id": current_person_id, "review_id": review_id })
             review_details = cur.fetchone()
     
-    return shared.templates.TemplateResponse(request=request, name="review/reaction-button.jinja", context={"current_person_id": current_person_id, "has_reacted": review_details["has_reacted"], "object": 'review', "object_id": review_id, "reaction_type": review_reaction_type, "reaction_count": review_details["reaction_count"]})
+    url = request.url_for("create_review_reaction", movie_id=movie_id, review_id=review_id)
+    return shared.templates.TemplateResponse(request=request, name="review/reaction-button.jinja", context={"current_person_id": current_person_id, "has_reacted": review_details["has_reacted"], "url": url, "reaction_type": review_reaction_type, "reaction_count": review_details["reaction_count"]})
 
-@router.post("/reply_reaction", response_class=HTMLResponse)
-async def create_reply_reaction(request: Request, form_data: Annotated[ReplyReactionFormData, Form()], current_person_id: Annotated[int, Depends(shared.get_current_person)]):
-    reply_id = form_data.reply_id
-    reply_reaction_type = form_data.reply_reaction_type
+@router.post("/movie/{movie_id}/review/{review_id}/reply/{reply_id}/react", response_class=HTMLResponse)
+async def create_reply_reaction(request: Request, movie_id: int, review_id: int, reply_id: int, form_data: Annotated[ReactionFormData, Form()], current_person_id: Annotated[int, Depends(shared.get_current_person)]):
+    reply_reaction_type = form_data.reaction_type
     
     with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
         with conn.cursor(row_factory=dict_row) as cur:
@@ -116,10 +113,13 @@ async def create_reply_reaction(request: Request, form_data: Annotated[ReplyReac
                             ''', {"reply_reaction_type": reply_reaction_type, "current_person_id": current_person_id, "reply_id": reply_id })
                 reply_details = cur.fetchone()
 
-    return shared.templates.TemplateResponse(request=request, name="review/reaction-button.jinja", context={"current_person_id": current_person_id, "has_reacted": reply_details["has_reacted"], "object": 'reply', "object_id": reply_id, "reaction_type": reply_reaction_type, "reaction_count": reply_details["reaction_count"]})
+    url = request.url_for("delete_reply_reaction", movie_id=movie_id, review_id=review_id, reply_id=reply_id)
+    return shared.templates.TemplateResponse(request=request, name="review/reaction-button.jinja", context={"current_person_id": current_person_id, "has_reacted": reply_details["has_reacted"], "url": url, "reaction_type": reply_reaction_type, "reaction_count": reply_details["reaction_count"]})
 
-@router.delete("/reply_reaction", response_class=HTMLResponse)
-async def delete_reply_reaction(request: Request, reply_id: int, reply_reaction_type: str, current_person_id: Annotated[int, Depends(shared.get_current_person)]):
+@router.delete("/movie/{movie_id}/review/{review_id}/reply/{reply_id}/react", response_class=HTMLResponse)
+async def delete_reply_reaction(request: Request, movie_id: int, review_id: int, reply_id: int, reaction_type: str, current_person_id: Annotated[int, Depends(shared.get_current_person)]):
+    reply_reaction_type = reaction_type
+
     with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
         with conn.cursor(row_factory=dict_row) as cur:
             cur.execute('''
@@ -149,4 +149,5 @@ async def delete_reply_reaction(request: Request, reply_id: int, reply_reaction_
                             ''', {"reply_reaction_type": reply_reaction_type, "current_person_id": current_person_id, "reply_id": reply_id })
                 reply_details = cur.fetchone()
 
-    return shared.templates.TemplateResponse(request=request, name="review/reaction-button.jinja", context={"current_person_id": current_person_id, "has_reacted": reply_details["has_reacted"], "object": 'reply', "object_id": reply_id, "reaction_type": reply_reaction_type, "reaction_count": reply_details["reaction_count"]})
+    url = request.url_for("create_reply_reaction", movie_id=movie_id, review_id=review_id, reply_id=reply_id)
+    return shared.templates.TemplateResponse(request=request, name="review/reaction-button.jinja", context={"current_person_id": current_person_id, "has_reacted": reply_details["has_reacted"], "url": url, "reaction_type": reply_reaction_type, "reaction_count": reply_details["reaction_count"]})

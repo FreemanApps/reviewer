@@ -12,16 +12,16 @@
             </div>
             {% if current_person_id == review_details['person_id'] %}
                 <div>
-                    <button hx-get="/edit-review" hx-vals='{"review_id": {{ review_details["review_id"] }}}' hx-target="#review-body" hx-swap="outerHTML" class="primary">Edit</button>
-                    <button hx-delete="/review/{{ review_details['review_id'] }}" hx-target="body" hx-push-url="true" hx-swap="outerHTML" hx-confirm="Are you sure you want to delete this review?" class="contrast">Delete</button>
+                    <button hx-get="{{ url_for('get_editable_review', movie_id=movie_id, review_id=review_details['review_id']) }}" hx-target="#review-body" hx-swap="outerHTML" class="primary">Edit</button>
+                    <button hx-delete="{{ url_for('delete_review', movie_id=movie_id, review_id=review_details['review_id']) }}" hx-target="body" hx-push-url="true" hx-swap="outerHTML" hx-confirm="Are you sure you want to delete this review?" class="contrast">Delete</button>
                 </div>
             {% endif %}
         </div>
         <footer class="grid">
-            {% with has_reacted = review_details["has_liked"], object = 'review', object_id = review_details["review_id"], reaction_type = 'like', reaction_count = review_details["likes"] %}
+            {% with has_reacted = review_details["has_liked"], url = url_for('create_review_reaction', movie_id=movie_id, review_id=review_details["review_id"]), object_id = review_details["review_id"], reaction_type = 'like', reaction_count = review_details["likes"] %}
                 {% include 'review/reaction-button.jinja' %}
             {% endwith %}
-            {% with has_reacted = review_details["has_disliked"], object = 'review', object_id = review_details["review_id"], reaction_type = 'dislike', reaction_count = review_details["dislikes"] %}
+            {% with has_reacted = review_details["has_disliked"], url = url_for('create_review_reaction', movie_id=movie_id, review_id=review_details["review_id"]), reaction_type = 'dislike', reaction_count = review_details["dislikes"] %}
                 {% include 'review/reaction-button.jinja' %}
             {% endwith %}
         </footer>

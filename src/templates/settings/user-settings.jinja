@@ -1,0 +1,19 @@
+<section>
+    <h2>User Details</h2>
+    <div>
+        <fieldset>
+            <label>
+                Username
+                <input readonly type="text" name="person_name" value="{{ current_person_details['person_name']|e }}" autocomplete="username"/>
+            </label>
+            <label>
+                Email Address
+                <input readonly type="text" name="email_address" value="{{ current_person_details['email_address']|e }}" autocomplete="email"/>
+            </label>
+        </fieldset>
+        <div class="grid">
+            <button hx-get="/settings/edit" hx-target="closest section" hx-swap="outerHTML">Edit</button>
+            <button hx-delete="/person/me" hx-target="body" hx-push-url="true" hx-confirm="Are you sure you want to delete your account?" class="contrast">Delete</button>
+        </div>
+    </div>
+</section>

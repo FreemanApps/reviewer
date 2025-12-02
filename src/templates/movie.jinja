@@ -29,12 +29,12 @@
     <section>
         <h2>Reviews</h2>
         <p><strong>Average Rating:</strong> {% if reviews_details["average_review_score"] %}{{ reviews_details["average_review_score"] }}{% else %}N/A{% endif %}</p>
-        <p><button hx-get="/movie/{{ movie_details['movie_id'] }}/review/new" hx-target="body" hx-push-url="true" hx-swap="outerHTML" class="primary">Add Review</button></p>
+        <p><button hx-get="{{ url_for('get_new_review_form', movie_id=movie_details['movie_id']) }}" hx-target="body" hx-push-url="true" hx-swap="outerHTML" class="primary">Add Review</button></p>
         {% if reviews %}
         <ul>
             {% for review_id, review_score, review_date, reviewer in reviews %}
             <li>
-                <a href="{{ url_for('get_review', review_id=review_id) }}">{{ review_score }} from {{ reviewer|e }} on {{ review_date }}</a>
+                <a href="{{ url_for('get_review', movie_id=movie_details['movie_id'], review_id=review_id) }}">{{ review_score }} from {{ reviewer|e }} on {{ review_date }}</a>
             </li>
             {% endfor %}
         </ul>
