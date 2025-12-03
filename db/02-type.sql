@@ -1,1 +1,0 @@
-CREATE TYPE reviewer.reaction_type AS ENUM ('like', 'dislike');

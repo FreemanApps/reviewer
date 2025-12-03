@@ -63,3 +63,11 @@ CREATE TABLE reviewer.reply_reaction (
     person_id INTEGER NOT NULL REFERENCES person(person_id) ON DELETE CASCADE,
     reply_id INTEGER NOT NULL REFERENCES reply(reply_id) ON DELETE CASCADE
 );
+
+CREATE TABLE reviewer.statistic (
+    statistic_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    statistic_type statistic_type NOT NULL,
+    person_id INTEGER NOT NULL REFERENCES person(person_id) ON DELETE CASCADE,
+    worker_id INTEGER REFERENCES worker(worker_id) ON DELETE CASCADE,
+    review_id INTEGER REFERENCES review(review_id) ON DELETE CASCADE
+);
