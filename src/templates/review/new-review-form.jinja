@@ -2,10 +2,12 @@
 {% block main %}
 <main class="container">
     <h1>New Review</h1>
-    <form hx-post="{{ url_for('create_review', movie_id=movie_id) }}" hx-target="body" hx-push-url="true" hx-swap="outerHTML">
-        <textarea name="review_content" placeholder="Add a review"></textarea>
-        <label><strong>Score:</strong><input type="number" name="review_score"></label>
-        <button type="submit" class="primary">Add</button>
+    <form hx-post="{{ url_for('create_review', movie_id=movie_id) }}" hx-target="body" hx-push-url="true" hx-swap="outerHTML" hx-disabled-elt="fieldset, button">
+        <fieldset>
+            <textarea name="review_content" placeholder="Add a review"></textarea>
+            <label><strong>Score:</strong><input type="number" name="review_score"></label>
+            <button type="submit" class="primary">Add</button>
+        </fieldset>
     </form>
 </main>
 {% endblock %}

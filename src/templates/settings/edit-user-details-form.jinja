@@ -1,6 +1,6 @@
 <section>
     <h2>User Details</h2>
-    <form hx-patch="/person/me" hx-target="closest section" hx-swap="outerHTML">
+    <form hx-patch="/person/me" hx-target="closest section" hx-swap="outerHTML" hx-disabled-elt="fieldset, button">
         <fieldset>
             <label>
                 Username
@@ -10,9 +10,7 @@
                 Email Address
                 <input type="text" name="email_address" value="{{ current_person_details['email_address']|e }}" autocomplete="email"/>
             </label>
+            <button type="submit" class="primary">Save</button>
         </fieldset>
-        <div class="grid">
-            <button type="submit">Save</button>
-        </div>
     </form>
 </section>

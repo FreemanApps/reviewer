@@ -56,8 +56,15 @@ async def get_person(request: Request, person_id: int, current_person_id: Annota
                             ORDER BY rp.reply_timestamp DESC
                         ''', (person_id,))
             replies = cur.fetchall()
+
+            cur.execute('''
+                            SELECT statistic_type, worker_id, review_id
+                            FROM reviewer.statistic
+                            WHERE person_id = %s
+                        ''', (person_id,))
+            statistics = cur.fetchall()
     
-    return shared.templates.TemplateResponse(request=request, name="person.jinja", context={"current_person_id": current_person_id, "person_details": person_details, "reviews": reviews, "replies": replies})
+    return shared.templates.TemplateResponse(request=request, name="person.jinja", context={"current_person_id": current_person_id, "person_details": person_details, "reviews": reviews, "replies": replies, "statistics": statistics})
 
 @router.get("/settings", response_class=HTMLResponse)
 async def get_current_person(request: Request, current_person_id: Annotated[int, Depends(shared.get_current_person)]):
@@ -81,7 +88,7 @@ async def get_editable_current_person(request: Request, current_person_id: Annot
                             WHERE person_id = %s
                         ''', (current_person_id,))
             current_person_details = cur.fetchone()
-    return shared.templates.TemplateResponse(request=request, name="settings/edit-user-settings-form.jinja", context={"current_person_id": current_person_id, "current_person_details": current_person_details})
+    return shared.templates.TemplateResponse(request=request, name="settings/edit-user-details-form.jinja", context={"current_person_id": current_person_id, "current_person_details": current_person_details})
 
 @router.patch("/person/me", response_class=HTMLResponse)
 async def update_current_person(request: Request, form_data: Annotated[EditPersonFormData, Form()], current_person_id: Annotated[int, Depends(shared.get_current_person)]):
@@ -103,7 +110,7 @@ async def update_current_person(request: Request, form_data: Annotated[EditPerso
                             WHERE person_id = %s
                         ''', (current_person_id,))
             current_person_details = cur.fetchone()
-    return shared.templates.TemplateResponse(request=request, name="settings/user-settings.jinja", context={"current_person_id": current_person_id, "current_person_details": current_person_details})
+    return shared.templates.TemplateResponse(request=request, name="settings/user-details.jinja", context={"current_person_id": current_person_id, "current_person_details": current_person_details})
 
 @router.delete("/person/me")
 async def delete_current_person(request: Request, current_person_id: Annotated[int, Depends(shared.get_current_person)]):
@@ -115,4 +122,15 @@ async def delete_current_person(request: Request, current_person_id: Annotated[i
                         ''', (current_person_id,))
             
     url = request.url_for("logout")
+    return RedirectResponse(url, status.HTTP_303_SEE_OTHER)
+
+@router.patch("/person/me/statistics")
+async def update_current_person_statistics(request: Request, current_person_id: Annotated[int, Depends(shared.get_current_person)]):
+    with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
+        with conn.cursor() as cur:
+            cur.execute('''
+                            CALL reviewer.generate_person_statistics(p_person_id => %s)
+                        ''', (current_person_id,))
+            
+    url = request.url_for("get_person", person_id=current_person_id)
     return RedirectResponse(url, status.HTTP_303_SEE_OTHER)

@@ -1,5 +1,7 @@
-<form hx-patch="{{ url_for('update_review', movie_id=movie_id, review_id=review_id) }}" hx-target="closest section" hx-swap="outerHTML">
-    <textarea name="review_content">{{ review_details["review_content"]|e }}</textarea>
-    <label><strong>Score:</strong><input type="number" name="review_score" value="{{ review_details['review_score'] }}"></label>
-    <button type="submit" class="primary">Save</button>
+<form hx-patch="{{ url_for('update_review', movie_id=movie_id, review_id=review_id) }}" hx-target="closest section" hx-swap="outerHTML" hx-disabled-elt="fieldset, button">
+    <fieldset>
+        <textarea name="review_content">{{ review_details["review_content"]|e }}</textarea>
+        <label><strong>Score:</strong><input type="number" name="review_score" value="{{ review_details['review_score'] }}"></label>
+        <button type="submit" class="primary">Save</button>
+    </fieldset>
 </form>
