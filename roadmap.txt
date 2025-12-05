@@ -1,3 +1,2 @@
-1. Add ability to generate interesting user statistics for the year - 12/3
-2. Convert queries with JOIN(s) into views - 12/5
-3. Add error handling and more - 12/7
+1. Convert queries with JOIN(s) into views - 12/7
+2. Add error handling and more - 12/11

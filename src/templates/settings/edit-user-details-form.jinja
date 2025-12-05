@@ -4,11 +4,11 @@
         <fieldset>
             <label>
                 Username
-                <input type="text" name="person_name" value="{{ current_person_details['person_name']|e }}" autocomplete="username"/>
+                <input type="text" name="person_name" value="{{ current_person_details['person_name'] | e }}" autocomplete="username"/>
             </label>
             <label>
                 Email Address
-                <input type="text" name="email_address" value="{{ current_person_details['email_address']|e }}" autocomplete="email"/>
+                <input type="text" name="email_address" value="{{ current_person_details['email_address'] | e }}" autocomplete="email"/>
             </label>
             <button type="submit" class="primary">Save</button>
         </fieldset>

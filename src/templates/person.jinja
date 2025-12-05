@@ -16,7 +16,7 @@
         <ul>
             {% for review_id, review_score, review_date, movie_id, movie_name in reviews %}
             <li>
-                <a href="{{ url_for('get_review', movie_id=movie_id, review_id=review_id) }}">{{ review_score }} for {{ movie_name|e }} on {{ review_date }}</a>
+                <a href="{{ url_for('get_review', movie_id=movie_id, review_id=review_id) }}">{{ review_score }} for {{ movie_name | e }} on {{ review_date }}</a>
             </li>
             {% endfor %}
         </ul>
@@ -30,7 +30,7 @@
         <ul>
             {% for reply_date, review_id, review_score, review_date, reviewer, movie_id, movie_name in replies %}
             <li>
-                <a href="{{ url_for('get_review', movie_id=movie_id, review_id=review_id) }}">Reply on {{ reply_date }} to {{ review_score }} from {{ reviewer|e }} for {{ movie_name|e }} on {{ review_date }}</a>
+                <a href="{{ url_for('get_review', movie_id=movie_id, review_id=review_id) }}">Reply on {{ reply_date }} to {{ review_score }} from {{ reviewer | e }} for {{ movie_name|e }} on {{ review_date }}</a>
             </li>
             {% endfor %}
         </ul>
@@ -41,7 +41,17 @@
     <section>
         <h2>Statistics</h2>
         {% if statistics %}
-        <p>Cool!</p>
+        <ul>
+            {% for statistic_name, statistic_type, worker_id, worker_name, review_id, review_score, review_date, movie_id, movie_name in statistics %}
+            <li>
+                {% if statistic_type == 'worker' %}
+                    <a href="{{ url_for('get_worker', worker_id=worker_id) }}">{{statistic_name | replace('_', ' ') | title }} - {{ worker_name | e }}</a>
+                {% elif statistic_type == 'review' %}
+                    <a href="{{ url_for('get_review', movie_id=movie_id, review_id=review_id) }}">{{statistic_name | replace('_', ' ') | title }} - {{ review_score }} for {{ movie_name | e }} on {{ review_date }}</a>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
         {% else %}
         <p>None</p>
         {% endif %}

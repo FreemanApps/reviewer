@@ -58,9 +58,22 @@ async def get_person(request: Request, person_id: int, current_person_id: Annota
             replies = cur.fetchall()
 
             cur.execute('''
-                            SELECT statistic_type, worker_id, review_id
-                            FROM reviewer.statistic
-                            WHERE person_id = %s
+                            SELECT
+                            s.statistic_name
+                            ,s.statistic_type
+                            ,w.worker_id
+                            ,w.worker_name
+                            ,r.review_id
+                            ,r.review_score
+                            ,TO_CHAR(r.review_timestamp AT TIME ZONE 'America/New_York', 'DD Mon YYYY') AS review_date
+                            ,m.movie_id
+                            ,m.movie_name
+                            FROM reviewer.statistic s
+                            LEFT OUTER JOIN reviewer.worker w ON s.worker_id = w.worker_id
+                            LEFT OUTER JOIN reviewer.review r ON s.review_id = r.review_id
+                            LEFT OUTER JOIN reviewer.movie m ON r.movie_id = m.movie_id
+                            WHERE s.person_id = %s
+                            ORDER BY s.statistic_id
                         ''', (person_id,))
             statistics = cur.fetchall()
     

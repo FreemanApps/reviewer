@@ -1,12 +1,12 @@
 {% extends "base.jinja" %}
 {% block main %}
 <main class="container">
-    <h1>{{ genre_details["genre_name"]|e }}</h1>
+    <h1>{{ genre_details["genre_name"] | e }}</h1>
     <section>
         <ul>
             {% for movie_id, movie_name, release_year in movies %}
             <li>
-                <a href="{{ url_for('get_movie', movie_id=movie_id) }}">{{ movie_name|e }} ({{ release_year }})</a>
+                <a href="{{ url_for('get_movie', movie_id=movie_id) }}">{{ movie_name | e }} ({{ release_year }})</a>
             </li>
             {% endfor %}
         </ul>

@@ -3,11 +3,11 @@
     {% for reply_id, reply_content, reply_date, person_id, person_name, has_liked, likes, has_disliked, dislikes in replies %}
     <article>
         <header class="grid">
-            <p><strong>User:</strong> <a href="{{ url_for('get_person', person_id=person_id) }}">{{ person_name|e }}</a></p>
+            <p><strong>User:</strong> <a href="{{ url_for('get_person', person_id=person_id) }}">{{ person_name | e }}</a></p>
             <p><strong>Date:</strong> {{ reply_date }}</p>
         </header>
         <div id="reply-{{ reply_id }}-body" style="display: flex; justify-content: space-between;">
-            <p>{{ reply_content|e }}</p>
+            <p>{{ reply_content | e }}</p>
             {% if current_person_id == person_id %}
                 <div>
                     <button hx-get="{{ url_for('get_editable_reply', movie_id=movie_id, review_id=review_id, reply_id=reply_id) }}" hx-target="#reply-{{ reply_id }}-body" hx-swap="outerHTML" hx-disabled-elt="fieldset, button" class="primary">Edit</button>

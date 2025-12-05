@@ -4,11 +4,11 @@
         <fieldset>
             <label>
                 Username
-                <input readonly type="text" name="person_name" value="{{ current_person_details['person_name']|e }}" autocomplete="username"/>
+                <input readonly type="text" name="person_name" value="{{ current_person_details['person_name'] | e }}" autocomplete="username"/>
             </label>
             <label>
                 Email Address
-                <input readonly type="text" name="email_address" value="{{ current_person_details['email_address']|e }}" autocomplete="email"/>
+                <input readonly type="text" name="email_address" value="{{ current_person_details['email_address'] | e }}" autocomplete="email"/>
             </label>
             <div class="grid">
                 <button hx-get="/settings/edit" hx-target="closest section" hx-swap="outerHTML" hx-disabled-elt="fieldset, button" class="primary">Edit</button>

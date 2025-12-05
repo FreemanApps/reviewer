@@ -2,12 +2,12 @@
     <h2>Details</h2>
     <article>
         <header class="grid">
-            <p><strong>User:</strong> <a href="{{ url_for('get_person', person_id=review_details['person_id']) }}">{{ review_details["person_name"]|e }}</a></p>
+            <p><strong>User:</strong> <a href="{{ url_for('get_person', person_id=review_details['person_id']) }}">{{ review_details["person_name"] | e }}</a></p>
             <p><strong>Date:</strong> {{ review_details["review_date"] }}</p>
         </header>
         <div id="review-body" style="display: flex; justify-content: space-between;">
             <div>
-                <p>{{ review_details["review_content"]|e }}</p>
+                <p>{{ review_details["review_content"] | e }}</p>
                 <p><strong>Score:</strong> {{ review_details["review_score"] }}</p>
             </div>
             {% if current_person_id == review_details['person_id'] %}

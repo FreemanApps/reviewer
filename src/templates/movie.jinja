@@ -1,7 +1,7 @@
 {% extends "base.jinja" %}
 {% block main %}
 <main class="container">
-    <h1>{{ movie_details["movie_name"]|e }}</h1>
+    <h1>{{ movie_details["movie_name"] | e }}</h1>
     <section>
         <h2>Details</h2>
         <p><strong>Release Date:</strong> {{ movie_details["release_year"] }}</p>
@@ -11,7 +11,7 @@
         <ul>
             {% for worker_position, worker_id, worker_name in workers %}
             <li>
-                {{ worker_position|e }} - <a href="{{ url_for('get_worker', worker_id=worker_id) }}">{{ worker_name|e }}</a>
+                {{ worker_position | e }} - <a href="{{ url_for('get_worker', worker_id=worker_id) }}">{{ worker_name | e }}</a>
             </li>
             {% endfor %}
         </ul>
@@ -21,7 +21,7 @@
         <ul>
             {% for genre_id, genre_name in genres %}
             <li>
-                <a href="{{ url_for('get_genre', genre_id=genre_id) }}">{{ genre_name|e }}</a>
+                <a href="{{ url_for('get_genre', genre_id=genre_id) }}">{{ genre_name | e }}</a>
             </li>
             {% endfor %}
         </ul>
@@ -34,7 +34,7 @@
         <ul>
             {% for review_id, review_score, review_date, reviewer in reviews %}
             <li>
-                <a href="{{ url_for('get_review', movie_id=movie_details['movie_id'], review_id=review_id) }}">{{ review_score }} from {{ reviewer|e }} on {{ review_date }}</a>
+                <a href="{{ url_for('get_review', movie_id=movie_details['movie_id'], review_id=review_id) }}">{{ review_score }} from {{ reviewer | e }} on {{ review_date }}</a>
             </li>
             {% endfor %}
         </ul>

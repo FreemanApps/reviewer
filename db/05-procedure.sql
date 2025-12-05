@@ -3,8 +3,8 @@ CREATE OR REPLACE PROCEDURE reviewer.generate_person_statistics(p_person_id INTE
     WHERE person_id = p_person_id;
 
     -- most viewed director
-    INSERT INTO reviewer.statistic (statistic_type, person_id, worker_id)
-    SELECT 'most_reviewed_director', p_person_id, worker_id FROM (
+    INSERT INTO reviewer.statistic (statistic_name, statistic_type, person_id, worker_id)
+    SELECT 'most_reviewed_director', 'worker', p_person_id, worker_id FROM (
         SELECT mw.worker_id, COUNT(*) AS num_reviewed
         FROM reviewer.review r
         LEFT OUTER JOIN reviewer.movie m ON r.movie_id = m.movie_id
@@ -17,8 +17,8 @@ CREATE OR REPLACE PROCEDURE reviewer.generate_person_statistics(p_person_id INTE
     );
 
     -- highest rated director
-    INSERT INTO reviewer.statistic (statistic_type, person_id, worker_id)
-    SELECT 'highest_rated_director', p_person_id, worker_id FROM (
+    INSERT INTO reviewer.statistic (statistic_name, statistic_type, person_id, worker_id)
+    SELECT 'highest_rated_director', 'worker', p_person_id, worker_id FROM (
         SELECT mw.worker_id, AVG(r.review_score) AS average_rating
         FROM reviewer.review r
         LEFT OUTER JOIN reviewer.movie m ON r.movie_id = m.movie_id
@@ -31,8 +31,8 @@ CREATE OR REPLACE PROCEDURE reviewer.generate_person_statistics(p_person_id INTE
     );
 
     -- most controversial review
-    INSERT INTO reviewer.statistic (statistic_type, person_id, review_id)
-    SELECT 'most_controversial_review', p_person_id, review_id FROM (
+    INSERT INTO reviewer.statistic (statistic_name, statistic_type, person_id, review_id)
+    SELECT 'most_controversial_review', 'review', p_person_id, review_id FROM (
         SELECT review_id, total / GREATEST(ABS(likes - dislikes), 1) AS controversial FROM (
             SELECT
             r.review_id
