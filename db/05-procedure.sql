@@ -10,7 +10,7 @@ CREATE OR REPLACE PROCEDURE reviewer.generate_person_statistics(p_person_id INTE
         LEFT OUTER JOIN reviewer.movie m ON r.movie_id = m.movie_id
         LEFT OUTER JOIN reviewer.movie_worker_bridge mw ON m.movie_id = mw.movie_id
         WHERE r.person_id = p_person_id
-        AND mw.movie_worker_position = 'Director'
+        AND mw.movie_worker_position = 'director'
         GROUP BY mw.worker_id
         ORDER BY num_reviewed DESC, mw.worker_id
         LIMIT 1
@@ -24,7 +24,7 @@ CREATE OR REPLACE PROCEDURE reviewer.generate_person_statistics(p_person_id INTE
         LEFT OUTER JOIN reviewer.movie m ON r.movie_id = m.movie_id
         LEFT OUTER JOIN reviewer.movie_worker_bridge mw ON m.movie_id = mw.movie_id
         WHERE r.person_id = p_person_id
-        AND mw.movie_worker_position = 'Director'
+        AND mw.movie_worker_position = 'director'
         GROUP BY mw.worker_id
         ORDER BY average_rating DESC, mw.worker_id
         LIMIT 1

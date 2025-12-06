@@ -41,6 +41,7 @@ async def create_review(request: Request, movie_id: int, form_data: Annotated[Re
 async def get_review(request: Request, movie_id: int, review_id: int, current_person_id: Annotated[int, Depends(shared.get_current_person)]):
     with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
         with conn.cursor(row_factory=dict_row) as cur:
+            # TODO
             cur.execute('''
                             SELECT
                             r.review_id
@@ -62,6 +63,7 @@ async def get_review(request: Request, movie_id: int, review_id: int, current_pe
             review_details = cur.fetchone()
 
         with conn.cursor() as cur:
+            # TODO
             cur.execute('''
                             SELECT
                             r.reply_id
@@ -121,6 +123,7 @@ async def update_review(request: Request, movie_id: int, review_id: int, form_da
                                 ''', (review_score, review_content, review_id,))
 
         with conn.cursor(row_factory=dict_row) as cur:
+            # TODO
             cur.execute('''
                             SELECT
                             r.review_id

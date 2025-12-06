@@ -22,16 +22,16 @@ INSERT INTO reviewer.movie (movie_name, release_date)
 VALUES ('Sinners', DATE '2025-04-18');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (1, 1, 'Director');
+VALUES (1, 1, 'director');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (1, 1, 'Writer');
+VALUES (1, 1, 'writer');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (1, 2, 'Actor');
+VALUES (1, 2, 'actor');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (1, 3, 'Actor');
+VALUES (1, 3, 'actor');
 
 INSERT INTO reviewer.movie_genre_bridge (movie_id, genre_id)
 VALUES (1, 1);
@@ -66,25 +66,25 @@ INSERT INTO reviewer.movie (movie_name, release_date)
 VALUES ('Warfare', DATE '2025-04-11');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (2, 4, 'Director');
+VALUES (2, 4, 'director');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (2, 4, 'Writer');
+VALUES (2, 4, 'writer');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (2, 5, 'Director');
+VALUES (2, 5, 'director');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (2, 5, 'Writer');
+VALUES (2, 5, 'writer');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (2, 6, 'Actor');
+VALUES (2, 6, 'actor');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (2, 7, 'Actor');
+VALUES (2, 7, 'actor');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (2, 8, 'Actor');
+VALUES (2, 8, 'actor');
 
 INSERT INTO reviewer.movie_genre_bridge (movie_id, genre_id)
 VALUES (2, 2);
@@ -110,22 +110,22 @@ INSERT INTO reviewer.movie (movie_name, release_date)
 VALUES ('Creed', DATE '2015-11-25');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (3, 1, 'Director');
+VALUES (3, 1, 'director');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (3, 1, 'Writer');
+VALUES (3, 1, 'writer');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (3, 9, 'Writer');
+VALUES (3, 9, 'writer');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (3, 2, 'Actor');
+VALUES (3, 2, 'actor');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (3, 10, 'Actor');
+VALUES (3, 10, 'actor');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (3, 11, 'Actor');
+VALUES (3, 11, 'actor');
 
 INSERT INTO reviewer.movie_genre_bridge (movie_id, genre_id)
 VALUES (3, 2);
@@ -145,22 +145,22 @@ INSERT INTO reviewer.movie (movie_name, release_date)
 VALUES ('Creed II', DATE '2018-11-21');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (4, 12, 'Director');
+VALUES (4, 12, 'director');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (4, 10, 'Writer');
+VALUES (4, 10, 'writer');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (4, 13, 'Writer');
+VALUES (4, 13, 'writer');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (4, 2, 'Actor');
+VALUES (4, 2, 'actor');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (4, 10, 'Actor');
+VALUES (4, 10, 'actor');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (4, 11, 'Actor');
+VALUES (4, 11, 'actor');
 
 INSERT INTO reviewer.movie_genre_bridge (movie_id, genre_id)
 VALUES (4, 2);
@@ -183,19 +183,19 @@ INSERT INTO reviewer.movie (movie_name, release_date)
 VALUES ('Civil War', DATE '2024-04-12');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (5, 5, 'Director');
+VALUES (5, 5, 'director');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (5, 5, 'Writer');
+VALUES (5, 5, 'writer');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (5, 14, 'Actor');
+VALUES (5, 14, 'actor');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (5, 15, 'Actor');
+VALUES (5, 15, 'actor');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (5, 16, 'Actor');
+VALUES (5, 16, 'actor');
 
 INSERT INTO reviewer.movie_genre_bridge (movie_id, genre_id)
 VALUES (5, 4);
@@ -224,19 +224,19 @@ INSERT INTO reviewer.movie (movie_name, release_date)
 VALUES ('Ex Machina', DATE '2015-04-10');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (6, 5, 'Director');
+VALUES (6, 5, 'director');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (6, 5, 'Writer');
+VALUES (6, 5, 'writer');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (6, 17, 'Actor');
+VALUES (6, 17, 'actor');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (6, 18, 'Actor');
+VALUES (6, 18, 'actor');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (6, 19, 'Actor');
+VALUES (6, 19, 'actor');
 
 INSERT INTO reviewer.movie_genre_bridge (movie_id, genre_id)
 VALUES (6, 6);
@@ -262,19 +262,19 @@ INSERT INTO reviewer.movie (movie_name, release_date)
 VALUES ('Spider-Man', DATE '2002-05-03');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (7, 22, 'Director');
+VALUES (7, 22, 'director');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (7, 23, 'Writer');
+VALUES (7, 23, 'writer');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (7, 20, 'Actor');
+VALUES (7, 20, 'actor');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (7, 21, 'Actor');
+VALUES (7, 21, 'actor');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (7, 14, 'Actor');
+VALUES (7, 14, 'actor');
 
 INSERT INTO reviewer.movie_genre_bridge (movie_id, genre_id)
 VALUES (7, 2);
@@ -297,19 +297,19 @@ INSERT INTO reviewer.movie (movie_name, release_date)
 VALUES ('Spider-Man 2', DATE '2004-06-30');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (8, 22, 'Director');
+VALUES (8, 22, 'director');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (8, 25, 'Writer');
+VALUES (8, 25, 'writer');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (8, 20, 'Actor');
+VALUES (8, 20, 'actor');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (8, 14, 'Actor');
+VALUES (8, 14, 'actor');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (8, 24, 'Actor');
+VALUES (8, 24, 'actor');
 
 INSERT INTO reviewer.movie_genre_bridge (movie_id, genre_id)
 VALUES (8, 2);
@@ -329,25 +329,25 @@ INSERT INTO reviewer.movie (movie_name, release_date)
 VALUES ('Spider-Man 3', DATE '2007-05-03');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (9, 22, 'Director');
+VALUES (9, 22, 'director');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (9, 25, 'Writer');
+VALUES (9, 25, 'writer');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (9, 22, 'Writer');
+VALUES (9, 22, 'writer');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (9, 26, 'Writer');
+VALUES (9, 26, 'writer');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (9, 20, 'Actor');
+VALUES (9, 20, 'actor');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (9, 14, 'Actor');
+VALUES (9, 14, 'actor');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (9, 24, 'Actor');
+VALUES (9, 24, 'actor');
 
 INSERT INTO reviewer.movie_genre_bridge (movie_id, genre_id)
 VALUES (9, 6);
@@ -379,19 +379,19 @@ INSERT INTO reviewer.movie (movie_name, release_date)
 VALUES ('Nosferatu', DATE '2024-12-25');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (10, 30, 'Director');
+VALUES (10, 30, 'director');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (10, 30, 'Writer');
+VALUES (10, 30, 'writer');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (10, 27, 'Actor');
+VALUES (10, 27, 'actor');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (10, 28, 'Actor');
+VALUES (10, 28, 'actor');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (10, 29, 'Actor');
+VALUES (10, 29, 'actor');
 
 INSERT INTO reviewer.movie_genre_bridge (movie_id, genre_id)
 VALUES (10, 8);
@@ -417,22 +417,22 @@ INSERT INTO reviewer.movie (movie_name, release_date)
 VALUES ('The Northman', DATE '2022-04-22');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (11, 30, 'Director');
+VALUES (11, 30, 'director');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (11, 34, 'Writer');
+VALUES (11, 34, 'writer');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (11, 30, 'Writer');
+VALUES (11, 30, 'writer');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (11, 31, 'Actor');
+VALUES (11, 31, 'actor');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (11, 32, 'Actor');
+VALUES (11, 32, 'actor');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (11, 33, 'Actor');
+VALUES (11, 33, 'actor');
 
 INSERT INTO reviewer.movie_genre_bridge (movie_id, genre_id)
 VALUES (11, 7);
@@ -458,22 +458,22 @@ INSERT INTO reviewer.movie (movie_name, release_date)
 VALUES ('The Lighthouse', DATE '2019-10-18');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (12, 30, 'Director');
+VALUES (12, 30, 'director');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (12, 30, 'Writer');
+VALUES (12, 30, 'writer');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (12, 37, 'Writer');
+VALUES (12, 37, 'writer');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (12, 35, 'Actor');
+VALUES (12, 35, 'actor');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (12, 21, 'Actor');
+VALUES (12, 21, 'actor');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (12, 36, 'Actor');
+VALUES (12, 36, 'actor');
 
 INSERT INTO reviewer.movie_genre_bridge (movie_id, genre_id)
 VALUES (12, 1);
@@ -502,22 +502,22 @@ INSERT INTO reviewer.movie (movie_name, release_date)
 VALUES ('Creed III', DATE '2023-03-03');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (13, 2, 'Director');
+VALUES (13, 2, 'director');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (13, 39, 'Writer');
+VALUES (13, 39, 'writer');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (13, 40, 'Writer');
+VALUES (13, 40, 'writer');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (13, 2, 'Actor');
+VALUES (13, 2, 'actor');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (13, 11, 'Actor');
+VALUES (13, 11, 'actor');
 
 INSERT INTO reviewer.movie_worker_bridge (movie_id, worker_id, movie_worker_position)
-VALUES (13, 38, 'Actor');
+VALUES (13, 38, 'actor');
 
 INSERT INTO reviewer.movie_genre_bridge (movie_id, genre_id)
 VALUES (13, 2);

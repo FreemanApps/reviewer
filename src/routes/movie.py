@@ -40,23 +40,22 @@ async def get_movie(request: Request, movie_id: int, current_person_id: Annotate
 
         with conn.cursor() as cur:
             cur.execute('''
-                            SELECT mw.movie_worker_position AS worker_position, w.worker_id, w.worker_name
-                            FROM reviewer.movie_worker_bridge mw
-                            JOIN reviewer.worker w ON mw.worker_id = w.worker_id
-                            WHERE mw.movie_id = %s
-                            ORDER BY mw.movie_worker_position, w.worker_name
+                            SELECT worker_id, worker_name, positions
+                            FROM reviewer.movie_with_workers
+                            WHERE movie_id = %s
+                            ORDER BY worker_name, positions
                         ''', (movie_id,))
             workers = cur.fetchall()
 
             cur.execute('''
-                            SELECT g.genre_id, g.genre_name
-                            FROM reviewer.movie_genre_bridge mg
-                            JOIN reviewer.genre g ON mg.genre_id = g.genre_id
-                            WHERE mg.movie_id = %s
-                            ORDER BY g.genre_name
+                            SELECT genre_id, genre_name
+                            FROM reviewer.movie_with_genres
+                            WHERE movie_id = %s
+                            ORDER BY genre_name
                         ''', (movie_id,))
             genres = cur.fetchall()
 
+            # TODO
             cur.execute('''
                             SELECT
                             r.review_id

@@ -23,7 +23,8 @@ async def create_reply(request: Request, movie_id: int, review_id: int, form_dat
                                 INSERT INTO reviewer.reply (reply_content, person_id, review_id)
                                 VALUES (%s, %s, %s)
                             ''', (reply_content, current_person_id, review_id,))
-                
+            
+            # TODO
             cur.execute('''
                             SELECT
                             r.reply_id
@@ -80,7 +81,8 @@ async def update_reply(request: Request, movie_id: int, review_id: int, reply_id
                                     SET reply_content = %s
                                     WHERE reply_id = %s
                                 ''', (reply_content, reply_id,))
-                
+            
+            # TODO
             cur.execute('''
                             SELECT
                             r.reply_id
@@ -122,6 +124,7 @@ async def delete_reply(request: Request, movie_id: int, review_id: int, reply_id
                                     WHERE reply_id = %s
                                 ''', (reply_id,))
 
+            # TODO
             cur.execute('''
                             SELECT
                             r.reply_id

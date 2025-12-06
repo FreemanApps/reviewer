@@ -22,15 +22,13 @@ async def get_worker(request: Request, worker_id: int, current_person_id: Annota
         with conn.cursor() as cur:
             cur.execute('''
                             SELECT
-                            m.movie_id
-                            ,m.movie_name
-                            ,EXTRACT(year FROM m.release_date) AS release_year
-                            ,STRING_AGG(mw.movie_worker_position, '/' ORDER BY mw.movie_worker_position) AS positions
-                            FROM reviewer.movie m
-                            JOIN reviewer.movie_worker_bridge mw ON m.movie_id = mw.movie_id
-                            WHERE mw.worker_id = %s
-                            GROUP BY m.movie_id
-                            ORDER BY m.release_date
+                            movie_id
+                            ,movie_name
+                            ,release_year
+                            ,positions
+                            FROM reviewer.movie_with_workers
+                            WHERE worker_id = %s
+                            ORDER BY release_date
                         ''', (worker_id,))
             movies = cur.fetchall()
     return shared.templates.TemplateResponse(request=request, name="worker.jinja", context={"current_person_id": current_person_id, "worker_details": worker_details, "movies": movies})

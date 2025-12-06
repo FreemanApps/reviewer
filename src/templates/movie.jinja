@@ -9,9 +9,9 @@
     <section>
         <h2>Cast & Crew</h2>
         <ul>
-            {% for worker_position, worker_id, worker_name in workers %}
+            {% for worker_id, worker_name, positions in workers %}
             <li>
-                {{ worker_position | e }} - <a href="{{ url_for('get_worker', worker_id=worker_id) }}">{{ worker_name | e }}</a>
+                <a href="{{ url_for('get_worker', worker_id=worker_id) }}">{{ worker_name | e }}</a> - {{ positions | title }} 
             </li>
             {% endfor %}
         </ul>

@@ -6,7 +6,7 @@
         <ul>
             {% for movie_id, movie_name, release_year, positions in movies %}
             <li>
-                <a href="{{ url_for('get_movie', movie_id=movie_id) }}">{{ movie_name | e }} ({{ release_year }})</a> - {{ positions | e }}
+                <a href="{{ url_for('get_movie', movie_id=movie_id) }}">{{ movie_name | e }} ({{ release_year }})</a> - {{ positions | title }}
             </li>
             {% endfor %}
         </ul>

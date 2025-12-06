@@ -25,6 +25,7 @@ async def get_person(request: Request, person_id: int, current_person_id: Annota
             person_details = cur.fetchone()
 
         with conn.cursor() as cur:
+            # TODO
             cur.execute('''
                             SELECT
                             r.review_id
@@ -39,6 +40,7 @@ async def get_person(request: Request, person_id: int, current_person_id: Annota
                         ''', (person_id,))
             reviews = cur.fetchall()
 
+            # TODO
             cur.execute('''
                             SELECT
                             TO_CHAR(rp.reply_timestamp AT TIME ZONE 'America/New_York', 'DD Mon YYYY') AS reply_date
@@ -57,6 +59,7 @@ async def get_person(request: Request, person_id: int, current_person_id: Annota
                         ''', (person_id,))
             replies = cur.fetchall()
 
+            # TODO
             cur.execute('''
                             SELECT
                             s.statistic_name
