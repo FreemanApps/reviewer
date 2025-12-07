@@ -25,58 +25,30 @@ async def get_person(request: Request, person_id: int, current_person_id: Annota
             person_details = cur.fetchone()
 
         with conn.cursor() as cur:
-            # TODO
+            # TODO - review_with_person_and_movie
             cur.execute('''
-                            SELECT
-                            r.review_id
-                            ,r.review_score
-                            ,TO_CHAR(r.review_timestamp AT TIME ZONE 'America/New_York', 'DD Mon YYYY') AS review_date
-                            ,m.movie_id
-                            ,m.movie_name
-                            FROM reviewer.review r
-                            JOIN reviewer.movie m ON r.movie_id = m.movie_id
-                            WHERE r.person_id = %s
-                            ORDER BY r.review_timestamp DESC
+                            SELECT review_id, review_score, review_date, movie_id, movie_name
+                            FROM reviewer.review_with_person_and_movie
+                            WHERE person_id = %s
+                            ORDER BY review_timestamp DESC
                         ''', (person_id,))
             reviews = cur.fetchall()
 
-            # TODO
+            # TODO - reply_with_review
             cur.execute('''
-                            SELECT
-                            TO_CHAR(rp.reply_timestamp AT TIME ZONE 'America/New_York', 'DD Mon YYYY') AS reply_date
-                            ,rv.review_id
-                            ,rv.review_score
-                            ,TO_CHAR(rv.review_timestamp AT TIME ZONE 'America/New_York', 'DD Mon YYYY') AS review_date
-                            ,p.person_name AS reviewerer
-                            ,m.movie_id
-                            ,m.movie_name
-                            FROM reviewer.reply rp
-                            JOIN reviewer.review rv ON rp.review_id = rv.review_id
-                            JOIN reviewer.person p ON rv.person_id = p.person_id
-                            JOIN reviewer.movie m ON rv.movie_id = m.movie_id
-                            WHERE rp.person_id = %s
-                            ORDER BY rp.reply_timestamp DESC
+                            SELECT reply_date, review_id, review_score, review_date, reviewer, movie_id, movie_name
+                            FROM reviewer.reply_with_review
+                            WHERE person_id = %s
+                            ORDER BY reply_timestamp DESC
                         ''', (person_id,))
             replies = cur.fetchall()
 
-            # TODO
+            # TODO - statistic_with_object
             cur.execute('''
-                            SELECT
-                            s.statistic_name
-                            ,s.statistic_type
-                            ,w.worker_id
-                            ,w.worker_name
-                            ,r.review_id
-                            ,r.review_score
-                            ,TO_CHAR(r.review_timestamp AT TIME ZONE 'America/New_York', 'DD Mon YYYY') AS review_date
-                            ,m.movie_id
-                            ,m.movie_name
-                            FROM reviewer.statistic s
-                            LEFT OUTER JOIN reviewer.worker w ON s.worker_id = w.worker_id
-                            LEFT OUTER JOIN reviewer.review r ON s.review_id = r.review_id
-                            LEFT OUTER JOIN reviewer.movie m ON r.movie_id = m.movie_id
-                            WHERE s.person_id = %s
-                            ORDER BY s.statistic_id
+                            SELECT statistic_name, statistic_type, worker_id, worker_name, review_id, review_score, review_date, movie_id, movie_name
+                            FROM reviewer.statistic_with_object
+                            WHERE person_id = %s
+                            ORDER BY statistic_id
                         ''', (person_id,))
             statistics = cur.fetchall()
     

@@ -13,6 +13,9 @@ GRANT SELECT ON reviewer.reply_reaction TO reviewer_user;
 GRANT SELECT ON reviewer.statistic TO reviewer_user;
 GRANT SELECT ON reviewer.movie_with_genres TO reviewer_user;
 GRANT SELECT ON reviewer.movie_with_workers TO reviewer_user;
+GRANT SELECT ON reviewer.review_with_person_and_movie TO reviewer_user;
+GRANT SELECT ON reviewer.reply_with_review TO reviewer_user;
+GRANT SELECT ON reviewer.statistic_with_object TO reviewer_user;
 
 GRANT INSERT ON reviewer.review TO reviewer_user;
 GRANT INSERT ON reviewer.reply TO reviewer_user;
@@ -30,3 +33,5 @@ GRANT DELETE ON reviewer.reply TO reviewer_user;
 GRANT DELETE ON reviewer.review_reaction TO reviewer_user;
 GRANT DELETE ON reviewer.reply_reaction TO reviewer_user;
 GRANT DELETE ON reviewer.statistic TO reviewer_user;
+
+-- TODO - grant execute on procedure?

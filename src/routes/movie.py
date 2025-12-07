@@ -55,17 +55,12 @@ async def get_movie(request: Request, movie_id: int, current_person_id: Annotate
                         ''', (movie_id,))
             genres = cur.fetchall()
 
-            # TODO
+            # TODO - review_with_person_and_movie
             cur.execute('''
-                            SELECT
-                            r.review_id
-                            ,r.review_score
-                            ,TO_CHAR(r.review_timestamp AT TIME ZONE 'America/New_York', 'DD Mon YYYY') AS review_date
-                            ,p.person_name AS reviewer
-                            FROM reviewer.review r
-                            JOIN reviewer.person p ON r.person_id = p.person_id
-                            WHERE r.movie_id = %s
-                            ORDER BY r.review_timestamp DESC
+                            SELECT review_id, review_score, review_date, reviewer
+                            FROM reviewer.review_with_person_and_movie
+                            WHERE movie_id = %s
+                            ORDER BY review_timestamp DESC
                         ''', (movie_id,))
             reviews = cur.fetchall()
 

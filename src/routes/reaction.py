@@ -34,7 +34,7 @@ async def create_review_reaction(request: Request, movie_id: int, review_id: int
                                     VALUES (%s, %s, %s)
                                 ''', (review_reaction_type, current_person_id, review_id, ))
                 
-            # TODO
+            # TODO - review_with_reactions
             cur.execute('''
                             SELECT
                             COUNT(*) FILTER (WHERE review_reaction_type = %(review_reaction_type)s AND person_id = %(current_person_id)s) has_reacted
@@ -71,7 +71,7 @@ async def delete_review_reaction(request: Request, movie_id: int, review_id: int
                                     AND review_id = %s
                                 ''', (review_reaction_type, current_person_id, review_id, ))
                 
-            # TODO
+            # TODO - review_with_reactions
             cur.execute('''
                             SELECT
                             COUNT(*) FILTER (WHERE review_reaction_type = %(review_reaction_type)s AND person_id = %(current_person_id)s) has_reacted
@@ -106,7 +106,7 @@ async def create_reply_reaction(request: Request, movie_id: int, review_id: int,
                                     VALUES (%s, %s, %s)
                                 ''', (reply_reaction_type, current_person_id, reply_id, ))
                 
-                # TODO
+                # TODO - reply_with_reactions
                 cur.execute('''
                                 SELECT
                                 COUNT(*) FILTER (WHERE reply_reaction_type = %(reply_reaction_type)s AND person_id = %(current_person_id)s) has_reacted
@@ -143,7 +143,7 @@ async def delete_reply_reaction(request: Request, movie_id: int, review_id: int,
                                     AND reply_id = %s
                                 ''', (reply_reaction_type, current_person_id, reply_id, ))
                 
-                # TODO
+                # TODO - reply_with_reactions
                 cur.execute('''
                                 SELECT
                                 COUNT(*) FILTER (WHERE reply_reaction_type = %(reply_reaction_type)s AND person_id = %(current_person_id)s) has_reacted
