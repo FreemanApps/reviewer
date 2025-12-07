@@ -1,2 +1,2 @@
-1. Convert queries with JOIN(s) into views - 12/7
-2. Add error handling and more - 12/11
+1. Add error handling for 400 errors (404 and 422 for sure), 500 errors and form errors - 12/11
+2. Add comments and README.md

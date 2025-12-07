@@ -25,7 +25,6 @@ async def get_person(request: Request, person_id: int, current_person_id: Annota
             person_details = cur.fetchone()
 
         with conn.cursor() as cur:
-            # TODO - review_with_person_and_movie
             cur.execute('''
                             SELECT review_id, review_score, review_date, movie_id, movie_name
                             FROM reviewer.review_with_person_and_movie
@@ -34,7 +33,6 @@ async def get_person(request: Request, person_id: int, current_person_id: Annota
                         ''', (person_id,))
             reviews = cur.fetchall()
 
-            # TODO - reply_with_review
             cur.execute('''
                             SELECT reply_date, review_id, review_score, review_date, reviewer, movie_id, movie_name
                             FROM reviewer.reply_with_review
@@ -43,7 +41,6 @@ async def get_person(request: Request, person_id: int, current_person_id: Annota
                         ''', (person_id,))
             replies = cur.fetchall()
 
-            # TODO - statistic_with_object
             cur.execute('''
                             SELECT statistic_name, statistic_type, worker_id, worker_name, review_id, review_score, review_date, movie_id, movie_name
                             FROM reviewer.statistic_with_object

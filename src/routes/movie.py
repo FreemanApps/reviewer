@@ -55,7 +55,6 @@ async def get_movie(request: Request, movie_id: int, current_person_id: Annotate
                         ''', (movie_id,))
             genres = cur.fetchall()
 
-            # TODO - review_with_person_and_movie
             cur.execute('''
                             SELECT review_id, review_score, review_date, reviewer
                             FROM reviewer.review_with_person_and_movie

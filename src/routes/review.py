@@ -41,47 +41,20 @@ async def create_review(request: Request, movie_id: int, form_data: Annotated[Re
 async def get_review(request: Request, movie_id: int, review_id: int, current_person_id: Annotated[int, Depends(shared.get_current_person)]):
     with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
         with conn.cursor(row_factory=dict_row) as cur:
-            # TODO - review_with_reactions
             cur.execute('''
-                            SELECT
-                            r.review_id
-                            ,r.review_score
-                            ,r.review_content
-                            ,TO_CHAR(r.review_timestamp AT TIME ZONE 'America/New_York', 'DD Mon YYYY') AS review_date
-                            ,p.person_id
-                            ,p.person_name
-                            ,COUNT(*) FILTER (WHERE rr.review_reaction_type = 'like' AND rr.person_id = %(current_person_id)s) has_liked
-                            ,COUNT(*) FILTER (WHERE rr.review_reaction_type = 'like') likes
-                            ,COUNT(*) FILTER (WHERE rr.review_reaction_type = 'dislike' AND rr.person_id = %(current_person_id)s) has_disliked
-                            ,COUNT(*) FILTER (WHERE rr.review_reaction_type = 'dislike') dislikes
-                            FROM reviewer.review r
-                            JOIN reviewer.person p ON r.person_id = p.person_id
-                            LEFT OUTER JOIN reviewer.review_reaction rr ON r.review_id = rr.review_id
-                            WHERE r.review_id = %(review_id)s
-                            GROUP BY r.review_id, p.person_id
-                        ''', {"current_person_id": current_person_id, "review_id": review_id})
+                            SELECT review_id, review_score, review_content, review_date, person_id, person_name, has_liked, likes, has_disliked, dislikes
+                            FROM reviewer.review_with_reactions(%s)
+                            WHERE review_id = %s
+                        ''', (current_person_id, review_id,))
             review_details = cur.fetchone()
 
         with conn.cursor() as cur:
-            # TODO - reply_with_reactions
             cur.execute('''
-                            SELECT
-                            r.reply_id
-                            ,r.reply_content
-                            ,TO_CHAR(r.reply_timestamp AT TIME ZONE 'America/New_York', 'DD Mon YYYY') AS reply_date
-                            ,p.person_id
-                            ,p.person_name
-                            ,COUNT(*) FILTER (WHERE rr.reply_reaction_type = 'like' AND rr.person_id = %(current_person_id)s) has_liked
-                            ,COUNT(*) FILTER (WHERE rr.reply_reaction_type = 'like') likes
-                            ,COUNT(*) FILTER (WHERE rr.reply_reaction_type = 'dislike' AND rr.person_id = %(current_person_id)s) has_disliked
-                            ,COUNT(*) FILTER (WHERE rr.reply_reaction_type = 'dislike') dislikes
-                            FROM reviewer.reply r
-                            JOIN reviewer.person p ON r.person_id = p.person_id
-                            LEFT OUTER JOIN reviewer.reply_reaction rr ON r.reply_id = rr.reply_id
-                            WHERE r.review_id = %(review_id)s
-                            GROUP BY r.reply_id, p.person_id
-                            ORDER BY r.reply_timestamp
-                        ''', {"current_person_id": current_person_id, "review_id": review_id})
+                            SELECT reply_id, reply_content, reply_date, person_id, person_name, has_liked, likes, has_disliked, dislikes
+                            FROM reviewer.reply_with_reactions(%s)
+                            WHERE review_id = %s
+                            ORDER BY reply_timestamp
+                        ''', (current_person_id, review_id,))
             replies = cur.fetchall()
     
     return shared.templates.TemplateResponse(request=request, name="review/review.jinja", context={"current_person_id": current_person_id, "movie_id": movie_id, "review_details": review_details, "replies": replies})
@@ -123,25 +96,11 @@ async def update_review(request: Request, movie_id: int, review_id: int, form_da
                                 ''', (review_score, review_content, review_id,))
 
         with conn.cursor(row_factory=dict_row) as cur:
-            # TODO - review_with_reactions
-            cur.execute('''
-                            SELECT
-                            r.review_id
-                            ,r.review_score
-                            ,r.review_content
-                            ,TO_CHAR(r.review_timestamp AT TIME ZONE 'America/New_York', 'DD Mon YYYY') AS review_date
-                            ,p.person_id
-                            ,p.person_name
-                            ,COUNT(*) FILTER (WHERE rr.review_reaction_type = 'like' AND rr.person_id = %(current_person_id)s) has_liked
-                            ,COUNT(*) FILTER (WHERE rr.review_reaction_type = 'like') likes
-                            ,COUNT(*) FILTER (WHERE rr.review_reaction_type = 'dislike' AND rr.person_id = %(current_person_id)s) has_disliked
-                            ,COUNT(*) FILTER (WHERE rr.review_reaction_type = 'dislike') dislikes
-                            FROM reviewer.review r
-                            JOIN reviewer.person p ON r.person_id = p.person_id
-                            LEFT OUTER JOIN reviewer.review_reaction rr ON r.review_id = rr.review_id
-                            WHERE r.review_id = %(review_id)s
-                            GROUP BY r.review_id, p.person_id
-                        ''', {"current_person_id": current_person_id, "review_id": review_id})
+            cur.execute('''                        
+                            SELECT review_id, review_score, review_content, review_date, person_id, person_name, has_liked, likes, has_disliked, dislikes
+                            FROM reviewer.review_with_reactions(%s)
+                            WHERE review_id = %s
+                        ''', (current_person_id, review_id,))
             review_details = cur.fetchone()
                 
     return shared.templates.TemplateResponse(request=request, name="review/review-section.jinja", context={"current_person_id": current_person_id, "movie_id": movie_id, "review_details": review_details})

@@ -33,5 +33,3 @@ GRANT DELETE ON reviewer.reply TO reviewer_user;
 GRANT DELETE ON reviewer.review_reaction TO reviewer_user;
 GRANT DELETE ON reviewer.reply_reaction TO reviewer_user;
 GRANT DELETE ON reviewer.statistic TO reviewer_user;
-
--- TODO - grant execute on procedure?

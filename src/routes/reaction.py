@@ -34,14 +34,11 @@ async def create_review_reaction(request: Request, movie_id: int, review_id: int
                                     VALUES (%s, %s, %s)
                                 ''', (review_reaction_type, current_person_id, review_id, ))
                 
-            # TODO - review_with_reactions
             cur.execute('''
-                            SELECT
-                            COUNT(*) FILTER (WHERE review_reaction_type = %(review_reaction_type)s AND person_id = %(current_person_id)s) has_reacted
-                            ,COUNT(*) FILTER (WHERE review_reaction_type = %(review_reaction_type)s) reaction_count
-                            FROM reviewer.review_reaction
-                            WHERE review_id = %(review_id)s
-                        ''', {"review_reaction_type": review_reaction_type, "current_person_id": current_person_id, "review_id": review_id })
+                            SELECT has_reacted, reaction_count
+                            FROM reviewer.review_with_reaction_type(%s, %s)
+                            WHERE review_id = %s
+                        ''', (review_reaction_type, current_person_id, review_id,))
             review_details = cur.fetchone()
     
     url = request.url_for("delete_review_reaction", movie_id=movie_id, review_id=review_id)
@@ -70,15 +67,12 @@ async def delete_review_reaction(request: Request, movie_id: int, review_id: int
                                     AND person_id = %s
                                     AND review_id = %s
                                 ''', (review_reaction_type, current_person_id, review_id, ))
-                
-            # TODO - review_with_reactions
+
             cur.execute('''
-                            SELECT
-                            COUNT(*) FILTER (WHERE review_reaction_type = %(review_reaction_type)s AND person_id = %(current_person_id)s) has_reacted
-                            ,COUNT(*) FILTER (WHERE review_reaction_type = %(review_reaction_type)s) reaction_count
-                            FROM reviewer.review_reaction
-                            WHERE review_id = %(review_id)s
-                        ''', {"review_reaction_type": review_reaction_type, "current_person_id": current_person_id, "review_id": review_id })
+                            SELECT has_reacted, reaction_count
+                            FROM reviewer.review_with_reaction_type(%s, %s)
+                            WHERE review_id = %s
+                        ''', (review_reaction_type, current_person_id, review_id,))
             review_details = cur.fetchone()
     
     url = request.url_for("create_review_reaction", movie_id=movie_id, review_id=review_id)
@@ -105,15 +99,12 @@ async def create_reply_reaction(request: Request, movie_id: int, review_id: int,
                                     INSERT INTO reviewer.reply_reaction (reply_reaction_type, person_id, reply_id)
                                     VALUES (%s, %s, %s)
                                 ''', (reply_reaction_type, current_person_id, reply_id, ))
-                
-                # TODO - reply_with_reactions
+
                 cur.execute('''
-                                SELECT
-                                COUNT(*) FILTER (WHERE reply_reaction_type = %(reply_reaction_type)s AND person_id = %(current_person_id)s) has_reacted
-                                ,COUNT(*) FILTER (WHERE reply_reaction_type = %(reply_reaction_type)s) reaction_count
-                                FROM reviewer.reply_reaction
-                                WHERE reply_id = %(reply_id)s
-                            ''', {"reply_reaction_type": reply_reaction_type, "current_person_id": current_person_id, "reply_id": reply_id })
+                                SELECT has_reacted, reaction_count
+                                FROM reviewer.reply_with_reaction_type(%s, %s)
+                                WHERE reply_id = %s
+                            ''', (reply_reaction_type, current_person_id, reply_id,))
                 reply_details = cur.fetchone()
 
     url = request.url_for("delete_reply_reaction", movie_id=movie_id, review_id=review_id, reply_id=reply_id)
@@ -143,15 +134,13 @@ async def delete_reply_reaction(request: Request, movie_id: int, review_id: int,
                                     AND reply_id = %s
                                 ''', (reply_reaction_type, current_person_id, reply_id, ))
                 
-                # TODO - reply_with_reactions
                 cur.execute('''
-                                SELECT
-                                COUNT(*) FILTER (WHERE reply_reaction_type = %(reply_reaction_type)s AND person_id = %(current_person_id)s) has_reacted
-                                ,COUNT(*) FILTER (WHERE reply_reaction_type = %(reply_reaction_type)s) reaction_count
-                                FROM reviewer.reply_reaction
-                                WHERE reply_id = %(reply_id)s
-                            ''', {"reply_reaction_type": reply_reaction_type, "current_person_id": current_person_id, "reply_id": reply_id })
+                                SELECT has_reacted, reaction_count
+                                FROM reviewer.reply_with_reaction_type(%s, %s)
+                                WHERE reply_id = %s
+                            ''', (reply_reaction_type, current_person_id, reply_id,))
                 reply_details = cur.fetchone()
+                print(reply_details)
 
     url = request.url_for("create_reply_reaction", movie_id=movie_id, review_id=review_id, reply_id=reply_id)
     return shared.templates.TemplateResponse(request=request, name="review/reaction-button.jinja", context={"current_person_id": current_person_id, "has_reacted": reply_details["has_reacted"], "url": url, "reaction_type": reply_reaction_type, "reaction_count": reply_details["reaction_count"]})

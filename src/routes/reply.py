@@ -24,25 +24,12 @@ async def create_reply(request: Request, movie_id: int, review_id: int, form_dat
                                 VALUES (%s, %s, %s)
                             ''', (reply_content, current_person_id, review_id,))
             
-            # TODO - reply_with_reactions
             cur.execute('''
-                            SELECT
-                            r.reply_id
-                            ,r.reply_content
-                            ,TO_CHAR(r.reply_timestamp AT TIME ZONE 'America/New_York', 'DD Mon YYYY') AS reply_date
-                            ,p.person_id
-                            ,p.person_name
-                            ,COUNT(*) FILTER (WHERE rr.reply_reaction_type = 'like' AND rr.person_id = %(current_person_id)s) has_liked
-                            ,COUNT(*) FILTER (WHERE rr.reply_reaction_type = 'like') likes
-                            ,COUNT(*) FILTER (WHERE rr.reply_reaction_type = 'dislike' AND rr.person_id = %(current_person_id)s) has_disliked
-                            ,COUNT(*) FILTER (WHERE rr.reply_reaction_type = 'dislike') dislikes
-                            FROM reviewer.reply r
-                            JOIN reviewer.person p ON r.person_id = p.person_id
-                            LEFT OUTER JOIN reviewer.reply_reaction rr ON r.reply_id = rr.reply_id
-                            WHERE r.review_id = %(review_id)s
-                            GROUP BY r.reply_id, p.person_id
-                            ORDER BY r.reply_timestamp
-                        ''', {"current_person_id": current_person_id, "review_id": review_id})
+                            SELECT reply_id, reply_content, reply_date, person_id, person_name, has_liked, likes, has_disliked, dislikes
+                            FROM reviewer.reply_with_reactions(%s)
+                            WHERE review_id = %s
+                            ORDER BY reply_timestamp
+                        ''', (current_person_id, review_id,))
             replies = cur.fetchall()
                 
     return shared.templates.TemplateResponse(request=request, name="review/replies-section.jinja", context={"current_person_id": current_person_id, "movie_id": movie_id, "review_id": review_id, "replies": replies})
@@ -82,25 +69,12 @@ async def update_reply(request: Request, movie_id: int, review_id: int, reply_id
                                     WHERE reply_id = %s
                                 ''', (reply_content, reply_id,))
             
-            # TODO - reply_with_reactions
             cur.execute('''
-                            SELECT
-                            r.reply_id
-                            ,r.reply_content
-                            ,TO_CHAR(r.reply_timestamp AT TIME ZONE 'America/New_York', 'DD Mon YYYY') AS reply_date
-                            ,p.person_id
-                            ,p.person_name
-                            ,COUNT(*) FILTER (WHERE rr.reply_reaction_type = 'like' AND rr.person_id = %(current_person_id)s) has_liked
-                            ,COUNT(*) FILTER (WHERE rr.reply_reaction_type = 'like') likes
-                            ,COUNT(*) FILTER (WHERE rr.reply_reaction_type = 'dislike' AND rr.person_id = %(current_person_id)s) has_disliked
-                            ,COUNT(*) FILTER (WHERE rr.reply_reaction_type = 'dislike') dislikes
-                            FROM reviewer.reply r
-                            JOIN reviewer.person p ON r.person_id = p.person_id
-                            LEFT OUTER JOIN reviewer.reply_reaction rr ON r.reply_id = rr.reply_id
-                            WHERE r.review_id = %(review_id)s
-                            GROUP BY r.reply_id, p.person_id
-                            ORDER BY r.reply_timestamp
-                        ''', {"current_person_id": current_person_id, "review_id": review_id})
+                            SELECT reply_id, reply_content, reply_date, person_id, person_name, has_liked, likes, has_disliked, dislikes
+                            FROM reviewer.reply_with_reactions(%s)
+                            WHERE review_id = %s
+                            ORDER BY reply_timestamp
+                        ''', (current_person_id, review_id,))
             replies = cur.fetchall()
                 
     return shared.templates.TemplateResponse(request=request, name="review/replies-section.jinja", context={"current_person_id": current_person_id, "movie_id": movie_id, "review_id": review_id, "replies": replies})
@@ -124,25 +98,12 @@ async def delete_reply(request: Request, movie_id: int, review_id: int, reply_id
                                     WHERE reply_id = %s
                                 ''', (reply_id,))
 
-            # TODO - reply_with_reactions
             cur.execute('''
-                            SELECT
-                            r.reply_id
-                            ,r.reply_content
-                            ,TO_CHAR(r.reply_timestamp AT TIME ZONE 'America/New_York', 'DD Mon YYYY') AS reply_date
-                            ,p.person_id
-                            ,p.person_name
-                            ,COUNT(*) FILTER (WHERE rr.reply_reaction_type = 'like' AND rr.person_id = %(current_person_id)s) has_liked
-                            ,COUNT(*) FILTER (WHERE rr.reply_reaction_type = 'like') likes
-                            ,COUNT(*) FILTER (WHERE rr.reply_reaction_type = 'dislike' AND rr.person_id = %(current_person_id)s) has_disliked
-                            ,COUNT(*) FILTER (WHERE rr.reply_reaction_type = 'dislike') dislikes
-                            FROM reviewer.reply r
-                            JOIN reviewer.person p ON r.person_id = p.person_id
-                            LEFT OUTER JOIN reviewer.reply_reaction rr ON r.reply_id = rr.reply_id
-                            WHERE r.review_id = %(review_id)s
-                            GROUP BY r.reply_id, p.person_id
-                            ORDER BY r.reply_timestamp
-                        ''', {"current_person_id": current_person_id, "review_id": review_id})
+                            SELECT reply_id, reply_content, reply_date, person_id, person_name, has_liked, likes, has_disliked, dislikes
+                            FROM reviewer.reply_with_reactions(%s)
+                            WHERE review_id = %s
+                            ORDER BY reply_timestamp
+                        ''', (current_person_id, review_id,))
             replies = cur.fetchall()
                 
     return shared.templates.TemplateResponse(request=request, name="review/replies-section.jinja", context={"current_person_id": current_person_id, "movie_id": movie_id, "review_id": review_id, "replies": replies})
