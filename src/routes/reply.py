@@ -1,9 +1,10 @@
 from pydantic import BaseModel
-from fastapi import APIRouter, Request, Form, Depends
+from fastapi import APIRouter, Request, Form, Depends, status
 from fastapi.responses import HTMLResponse
 from typing import Annotated
 import psycopg
 from psycopg.rows import dict_row
+from fastapi.exceptions import HTTPException
 
 from ..services import shared
 
@@ -44,7 +45,9 @@ async def get_editable_reply(request: Request, movie_id: int, review_id: int, re
                             WHERE reply_id = %s
                         ''', (reply_id,))
             reply_details = cur.fetchone()
-                
+
+    if not reply_details:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)                  
     return shared.templates.TemplateResponse(request=request, name="review/edit-reply-form.jinja", context={"current_person_id": current_person_id, "movie_id": movie_id, "review_id": review_id, "reply_id": reply_id, "reply_details": reply_details})
 
 @router.patch("/movie/{movie_id}/review/{review_id}/reply/{reply_id}", response_class=HTMLResponse)

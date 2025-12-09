@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Request, status
 from fastapi.responses import HTMLResponse
 from typing import Annotated
 import psycopg
 from psycopg.rows import dict_row
+from fastapi.exceptions import HTTPException
 
 from ..services import shared
 
@@ -18,6 +19,9 @@ async def get_movies(request: Request, current_person_id: Annotated[int, Depends
                             ORDER BY movie_name, release_date
                         ''')
             movies = cur.fetchall()
+    
+    if not movies:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     return shared.templates.TemplateResponse(request=request, name="home.jinja", context={"current_person_id": current_person_id, "movies": movies})
 
 @router.get("/movie/{movie_id}", response_class=HTMLResponse)
@@ -63,4 +67,6 @@ async def get_movie(request: Request, movie_id: int, current_person_id: Annotate
                         ''', (movie_id,))
             reviews = cur.fetchall()
 
+    if not movie_details:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     return shared.templates.TemplateResponse(request=request, name="movie.jinja", context={"current_person_id": current_person_id, "movie_details": movie_details, "workers": workers, "genres": genres, "reviews_details": reviews_details, "reviews": reviews})

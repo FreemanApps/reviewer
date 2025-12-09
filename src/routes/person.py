@@ -4,6 +4,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from typing import Annotated
 import psycopg
 from psycopg.rows import dict_row
+from fastapi.exceptions import HTTPException
 
 from ..services import shared
 
@@ -48,7 +49,9 @@ async def get_person(request: Request, person_id: int, current_person_id: Annota
                             ORDER BY statistic_id
                         ''', (person_id,))
             statistics = cur.fetchall()
-    
+
+    if not person_details:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)    
     return shared.templates.TemplateResponse(request=request, name="person.jinja", context={"current_person_id": current_person_id, "person_details": person_details, "reviews": reviews, "replies": replies, "statistics": statistics})
 
 @router.get("/settings", response_class=HTMLResponse)

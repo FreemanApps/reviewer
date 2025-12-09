@@ -4,6 +4,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from typing import Annotated
 import psycopg
 from psycopg.rows import dict_row
+from fastapi.exceptions import HTTPException
 
 from ..services import shared
 
@@ -56,7 +57,9 @@ async def get_review(request: Request, movie_id: int, review_id: int, current_pe
                             ORDER BY reply_timestamp
                         ''', (current_person_id, review_id,))
             replies = cur.fetchall()
-    
+
+    if not review_details:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)      
     return shared.templates.TemplateResponse(request=request, name="review/review.jinja", context={"current_person_id": current_person_id, "movie_id": movie_id, "review_details": review_details, "replies": replies})
 
 @router.get("/movie/{movie_id}/review/{review_id}/edit", response_class=HTMLResponse)
@@ -69,7 +72,9 @@ async def get_editable_review(request: Request, movie_id: int, review_id: int, c
                             WHERE review_id = %s
                         ''', (review_id,))
             review_details = cur.fetchone()
-                
+
+    if not review_details:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)                  
     return shared.templates.TemplateResponse(request=request, name="review/edit-review-form.jinja", context={"current_person_id": current_person_id, "movie_id": movie_id, "review_id": review_id, "review_details": review_details})
 
 @router.patch("/movie/{movie_id}/review/{review_id}", response_class=HTMLResponse)
