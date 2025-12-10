@@ -33,7 +33,11 @@ async def login(request: Request, response: Response, form_data: Annotated[Login
                         ''', (form_data.email_address,))
             current_person_details = cur.fetchone()
 
-    if password_hash.verify(form_data.password, current_person_details["hashed_password"]):
+    try:
+        verify = password_hash.verify(form_data.password, current_person_details["hashed_password"])
+        if not verify:
+            raise Exception("Passwords do not match")
+        
         payload = {
             "sub": str(current_person_details["person_id"]),
             "exp": datetime.now(timezone.utc) + timedelta(minutes=shared.jwt_access_token_expire_minutes)
@@ -44,6 +48,9 @@ async def login(request: Request, response: Response, form_data: Annotated[Login
         response = RedirectResponse(url, status.HTTP_303_SEE_OTHER)
         response.set_cookie(key="token", value=token)
         return response
+    except:
+        error = 'Login details are invalid'
+        return shared.templates.TemplateResponse(request=request, name="login.jinja", context={"form_data": form_data, "error":error})
 
 @router.get("/logout")
 async def logout(request: Request, response: Response):

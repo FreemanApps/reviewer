@@ -3,9 +3,12 @@
 <main class="container">
     <h1>Login</h1>
     <form hx-post="{{ url_for('login') }}" hx-target="body" hx-push-url="true" hx-disabled-elt="fieldset, button">
-        <fieldset class="grid">
-            <input type="text" name="email_address" placeholder="Email" aria-label="Email" autocomplete="email"/>
-            <input type="password" name="password" placeholder="Password" aria-label="Password" autocomplete="current-password"/>
+        <fieldset>
+            <input type="text" name="email_address" placeholder="Email" aria-label="Email" autocomplete="email"{% if form_data %} value="{{ form_data['email_address'] }}"{% endif %}{% if error %} aria-describedby="invalid-helper" aria-invalid="true"{% endif %}/>
+            <input type="password" name="password" placeholder="Password" aria-label="Password" autocomplete="current-password"{% if form_data %} value="{{ form_data['password'] }}"{% endif %}{% if error %} aria-describedby="invalid-helper" aria-invalid="true"{% endif %}/>
+            {% if error %}
+                <small id="invalid-helper">{{ error }}</small>
+            {% endif %}
             <button type="submit" class="primary">Login</button>
         </fieldset>
     </form>
