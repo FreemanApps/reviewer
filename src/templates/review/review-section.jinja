@@ -7,8 +7,12 @@
         </header>
         <div id="review-body" style="display: flex; justify-content: space-between;">
             <div>
-                <p>{{ review_details["review_content"] | e }}</p>
-                <p><strong>Score:</strong> {{ review_details["review_score"] }}</p>
+                {%if review_details["review_content"] %}
+                    <p>{{ review_details["review_content"] | e }}</p>
+                {% endif %}
+                {%if review_details["review_score"] %}
+                    <p><strong>Score:</strong> {{ review_details["review_score"] }}</p>
+                {% endif %}
             </div>
             {% if current_person_id == review_details['person_id'] %}
                 <div>

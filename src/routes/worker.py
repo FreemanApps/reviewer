@@ -12,6 +12,7 @@ router = APIRouter()
 @router.get("/worker/{worker_id}", response_class=HTMLResponse)
 async def get_worker(request: Request, worker_id: int, current_person_id: Annotated[int, Depends(shared.get_current_person)]):
     with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
+        # get worker details
         with conn.cursor(row_factory=dict_row) as cur:
             cur.execute('''
                             SELECT worker_name
@@ -20,6 +21,7 @@ async def get_worker(request: Request, worker_id: int, current_person_id: Annota
                         ''', (worker_id,))
             worker_details = cur.fetchone()
 
+        # get movies for the worker
         with conn.cursor() as cur:
             cur.execute('''
                             SELECT
@@ -33,6 +35,7 @@ async def get_worker(request: Request, worker_id: int, current_person_id: Annota
                         ''', (worker_id,))
             movies = cur.fetchall()
 
+    # if needed, send 404 error; otherwise, send worker page
     if not worker_details:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)  
     return shared.templates.TemplateResponse(request=request, name="worker.jinja", context={"current_person_id": current_person_id, "worker_details": worker_details, "movies": movies})

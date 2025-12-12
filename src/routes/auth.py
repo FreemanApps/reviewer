@@ -20,11 +20,13 @@ router = APIRouter()
 
 @router.get("/login", response_class=HTMLResponse)
 def get_login(request: Request):
+    # send to login page
     return shared.templates.TemplateResponse(request=request, name="login.jinja")
 
 @router.post("/login")
 async def login(request: Request, response: Response, form_data: Annotated[LoginFormData, Form()]):
     with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
+        # get hashed password for the inputted email address
         with conn.cursor(row_factory=dict_row) as cur:
             cur.execute('''
                             SELECT person_id, hashed_password
@@ -33,7 +35,7 @@ async def login(request: Request, response: Response, form_data: Annotated[Login
                         ''', (form_data.email_address,))
             current_person_details = cur.fetchone()
 
-    # attempt to verify input password against hashed password
+    # attempt to verify inputted password against hashed password
     try:
         verify = password_hash.verify(form_data.password, current_person_details["hashed_password"])
         if not verify:

@@ -1,7 +1,14 @@
-<form hx-patch="{{ url_for('update_review', movie_id=movie_id, review_id=review_id) }}" hx-target="closest section" hx-swap="outerHTML" hx-disabled-elt="fieldset, button">
+<form hx-patch="{{ url_for('update_review', movie_id=movie_id, review_id=review_id) }}" hx-target="closest section" hx-swap="outerHTML" hx-disabled-elt="fieldset, button" id="edit-review-form">
     <fieldset>
-        <textarea name="review_content">{{ review_details["review_content"] | e }}</textarea>
-        <label><strong>Score:</strong><input type="number" name="review_score" value="{{ review_details['review_score'] }}"></label>
+        <textarea id="review_content" name="review_content" placeholder="Add a review"{% if error and error["form"] %} aria-describedby="form-invalid-helper" aria-invalid="true"{% endif %}>{% if form_data and form_data['review_content'] %}{{ form_data['review_content'] | e }}{% elif review_details and review_details['review_content'] %}{{ review_details['review_content'] | e }}{% endif %}</textarea>
+        <label for="review_score"><strong>Score:</strong></label>
+        <input id="review_score" type="number" name="review_score" {% if form_data and form_data['review_score'] %} value="{{ form_data['review_score'] | e }}"{% elif review_details and review_details['review_score'] %} value="{{ review_details['review_score'] }}"{% endif %}{% if error and error["form"] %} aria-describedby="form-invalid-helper" aria-invalid="true"{% elif error and error["review_score"] %} aria-describedby="review-score-invalid-helper" aria-invalid="true"{% endif %}>
+        {% if error and error["review_score"] %}
+            <small id="review-score-invalid-helper">{{ error["review_score"] }}</small>
+        {% endif %}
+        {% if error and error["form"] %}
+            <small id="form-invalid-helper">{{ error["form"] }}</small>
+        {% endif %}
         <button type="submit" class="primary">Save</button>
     </fieldset>
 </form>

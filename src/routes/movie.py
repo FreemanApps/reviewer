@@ -12,6 +12,7 @@ router = APIRouter()
 @router.get("/", response_class=HTMLResponse)
 async def get_movies(request: Request, current_person_id: Annotated[int, Depends(shared.get_current_person)]):
     with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
+        # get all movies
         with conn.cursor() as cur:
             cur.execute('''
                             SELECT movie_id, movie_name, EXTRACT(year FROM release_date) AS release_year
@@ -20,6 +21,7 @@ async def get_movies(request: Request, current_person_id: Annotated[int, Depends
                         ''')
             movies = cur.fetchall()
     
+    # if needed, send 404 error; otherwise, send home page
     if not movies:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     return shared.templates.TemplateResponse(request=request, name="home.jinja", context={"current_person_id": current_person_id, "movies": movies})
@@ -28,6 +30,7 @@ async def get_movies(request: Request, current_person_id: Annotated[int, Depends
 async def get_movie(request: Request, movie_id: int, current_person_id: Annotated[int, Depends(shared.get_current_person)]):
     with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
         with conn.cursor(row_factory=dict_row) as cur:
+            # get movie details
             cur.execute('''
                             SELECT movie_id, movie_name, TO_CHAR(release_date, 'DD Mon YYYY') AS release_year
                             FROM reviewer.movie
@@ -35,6 +38,7 @@ async def get_movie(request: Request, movie_id: int, current_person_id: Annotate
                         ''', (movie_id,))
             movie_details = cur.fetchone()
 
+            # get aggregate review details
             cur.execute('''
                             SELECT ROUND(AVG(review_score), 2) AS average_review_score
                             FROM reviewer.review
@@ -43,6 +47,7 @@ async def get_movie(request: Request, movie_id: int, current_person_id: Annotate
             reviews_details = cur.fetchone()
 
         with conn.cursor() as cur:
+            # get workers for the movie
             cur.execute('''
                             SELECT worker_id, worker_name, positions
                             FROM reviewer.movie_with_workers
@@ -51,6 +56,7 @@ async def get_movie(request: Request, movie_id: int, current_person_id: Annotate
                         ''', (movie_id,))
             workers = cur.fetchall()
 
+            # get genres for the movie
             cur.execute('''
                             SELECT genre_id, genre_name
                             FROM reviewer.movie_with_genres
@@ -59,6 +65,7 @@ async def get_movie(request: Request, movie_id: int, current_person_id: Annotate
                         ''', (movie_id,))
             genres = cur.fetchall()
 
+            # get reviews for the movie
             cur.execute('''
                             SELECT review_id, review_score, review_date, reviewer
                             FROM reviewer.review_with_person_and_movie
@@ -67,6 +74,7 @@ async def get_movie(request: Request, movie_id: int, current_person_id: Annotate
                         ''', (movie_id,))
             reviews = cur.fetchall()
 
+    # if needed, send 404 error; otherwise, send movie page
     if not movie_details:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     return shared.templates.TemplateResponse(request=request, name="movie.jinja", context={"current_person_id": current_person_id, "movie_details": movie_details, "workers": workers, "genres": genres, "reviews_details": reviews_details, "reviews": reviews})

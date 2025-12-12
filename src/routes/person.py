@@ -18,6 +18,7 @@ router = APIRouter()
 @router.get("/person/{person_id}", response_class=HTMLResponse)
 async def get_person(request: Request, person_id: int, current_person_id: Annotated[int, Depends(shared.get_current_person)]):
     with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
+        # get person details
         with conn.cursor(row_factory=dict_row) as cur:
             cur.execute('''
                             SELECT person_name
@@ -27,6 +28,7 @@ async def get_person(request: Request, person_id: int, current_person_id: Annota
             person_details = cur.fetchone()
 
         with conn.cursor() as cur:
+            # get reviews for person
             cur.execute('''
                             SELECT review_id, review_score, review_date, movie_id, movie_name
                             FROM reviewer.review_with_person_and_movie
@@ -35,6 +37,7 @@ async def get_person(request: Request, person_id: int, current_person_id: Annota
                         ''', (person_id,))
             reviews = cur.fetchall()
 
+            # get replies for person
             cur.execute('''
                             SELECT reply_date, review_id, review_score, review_date, reviewer, movie_id, movie_name
                             FROM reviewer.reply_with_review
@@ -43,6 +46,7 @@ async def get_person(request: Request, person_id: int, current_person_id: Annota
                         ''', (person_id,))
             replies = cur.fetchall()
 
+            # get statistics for person
             cur.execute('''
                             SELECT statistic_name, statistic_type, worker_id, worker_name, review_id, review_score, review_date, movie_id, movie_name
                             FROM reviewer.statistic_with_object
@@ -51,6 +55,7 @@ async def get_person(request: Request, person_id: int, current_person_id: Annota
                         ''', (person_id,))
             statistics = cur.fetchall()
 
+    # if needed, send 404 error; otherwise, send person page
     if not person_details:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)    
     return shared.templates.TemplateResponse(request=request, name="person.jinja", context={"current_person_id": current_person_id, "person_details": person_details, "reviews": reviews, "replies": replies, "statistics": statistics})
@@ -58,6 +63,7 @@ async def get_person(request: Request, person_id: int, current_person_id: Annota
 @router.get("/settings", response_class=HTMLResponse)
 async def get_current_person(request: Request, current_person_id: Annotated[int, Depends(shared.get_current_person)]):
     with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
+        # get current person details
         with conn.cursor(row_factory=dict_row) as cur:
             cur.execute('''
                             SELECT person_name, email_address
@@ -65,11 +71,13 @@ async def get_current_person(request: Request, current_person_id: Annotated[int,
                             WHERE person_id = %s
                         ''', (current_person_id,))
             current_person_details = cur.fetchone()
+    # send settings page
     return shared.templates.TemplateResponse(request=request, name="settings/settings.jinja", context={"current_person_id": current_person_id, "current_person_details": current_person_details})
 
 @router.get("/settings/edit", response_class=HTMLResponse)
 async def get_editable_current_person(request: Request, current_person_id: Annotated[int, Depends(shared.get_current_person)]):    
     with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
+        # get current person details
         with conn.cursor(row_factory=dict_row) as cur:
             cur.execute('''
                             SELECT person_name, email_address
@@ -77,13 +85,16 @@ async def get_editable_current_person(request: Request, current_person_id: Annot
                             WHERE person_id = %s
                         ''', (current_person_id,))
             current_person_details = cur.fetchone()
+    # send edit settings page
     return shared.templates.TemplateResponse(request=request, name="settings/edit-user-details-form.jinja", context={"current_person_id": current_person_id, "current_person_details": current_person_details})
 
 @router.patch("/person/me", response_class=HTMLResponse)
 async def update_current_person(request: Request, form_data: Annotated[EditPersonFormData, Form()], current_person_id: Annotated[int, Depends(shared.get_current_person)]):
+    # grab form details
     person_name = form_data.person_name
     email_address = form_data.email_address
 
+    # validate form details
     error = {}
     if not person_name:
         error["person_name"] = "Username must be inputted"
@@ -92,6 +103,7 @@ async def update_current_person(request: Request, form_data: Annotated[EditPerso
     except:
         error["email_address"] = "Email address must be valid"
 
+    # if validation failed, send back edit settings page with details
     if len(error) > 0:
         response = shared.templates.TemplateResponse(request=request, name="settings/edit-user-details-form.jinja", context={"current_person_id": current_person_id, "form_data": form_data, "error": error})
         response.headers["HX-Retarget"] = "#edit-user-details-form"
@@ -99,6 +111,7 @@ async def update_current_person(request: Request, form_data: Annotated[EditPerso
     
     with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
         with conn.cursor(row_factory=dict_row) as cur:
+            # update current person
             with conn.transaction():
                 cur.execute('''
                                 UPDATE reviewer.person
@@ -106,33 +119,39 @@ async def update_current_person(request: Request, form_data: Annotated[EditPerso
                                 WHERE person_id = %s
                             ''', (person_name, email_address, current_person_id,))
 
+            # get current person details
             cur.execute('''
                             SELECT person_name, email_address
                             FROM reviewer.person
                             WHERE person_id = %s
                         ''', (current_person_id,))
             current_person_details = cur.fetchone()
+    # send settings page
     return shared.templates.TemplateResponse(request=request, name="settings/user-details.jinja", context={"current_person_id": current_person_id, "current_person_details": current_person_details})
 
 @router.delete("/person/me")
 async def delete_current_person(request: Request, current_person_id: Annotated[int, Depends(shared.get_current_person)]):
     with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
+        # delete current person
         with conn.cursor() as cur:
             cur.execute('''
                             DELETE FROM reviewer.person
                             WHERE person_id = %s
                         ''', (current_person_id,))
             
+    # send to logout page
     url = request.url_for("logout")
     return RedirectResponse(url, status.HTTP_303_SEE_OTHER)
 
 @router.patch("/person/me/statistics")
 async def update_current_person_statistics(request: Request, current_person_id: Annotated[int, Depends(shared.get_current_person)]):
     with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
+        # generate statistics for current person
         with conn.cursor() as cur:
             cur.execute('''
                             CALL reviewer.generate_person_statistics(p_person_id => %s)
                         ''', (current_person_id,))
             
+    # send to current person's page
     url = request.url_for("get_person", person_id=current_person_id)
     return RedirectResponse(url, status.HTTP_303_SEE_OTHER)

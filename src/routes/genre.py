@@ -12,6 +12,7 @@ router = APIRouter()
 @router.get("/genre/{genre_id}", response_class=HTMLResponse)
 async def get_genre(request: Request, genre_id: int, current_person_id: Annotated[int, Depends(shared.get_current_person)]):
     with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
+        # get genre details
         with conn.cursor(row_factory=dict_row) as cur:
             cur.execute('''
                             SELECT genre_name
@@ -20,6 +21,7 @@ async def get_genre(request: Request, genre_id: int, current_person_id: Annotate
                         ''', (genre_id,))
             genre_details = cur.fetchone()
 
+        # get movies for the genre
         with conn.cursor() as cur:
             cur.execute('''
                             SELECT movie_id, movie_name, release_year
@@ -29,6 +31,7 @@ async def get_genre(request: Request, genre_id: int, current_person_id: Annotate
                         ''', (genre_id,))
             movies = cur.fetchall()
 
+    # if needed, send 404 error; otherwise, send genre page
     if not genre_details:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     return shared.templates.TemplateResponse(request=request, name="genre.jinja", context={"current_person_id": current_person_id, "genre_details": genre_details, "movies": movies})

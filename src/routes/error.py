@@ -7,12 +7,15 @@ router = APIRouter()
 
 @router.get("/error/422", response_class=HTMLResponse)
 async def get_error_422(request: Request):
+    # send error 422 page
     return shared.templates.TemplateResponse(request=request, name="error/422.jinja")
 
 @router.get("/error/404", response_class=HTMLResponse)
 async def get_error_404(request: Request):
+    # send error 404 page
     return shared.templates.TemplateResponse(request=request, name="error/404.jinja")
 
 @router.get("/error/500", response_class=HTMLResponse)
 async def get_error_500(request: Request):
+    # send error 500 page
     return shared.templates.TemplateResponse(request=request, name="error/500.jinja")

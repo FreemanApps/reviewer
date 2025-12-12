@@ -1,2 +1,0 @@
-1. Add form error handling for post and patch on review - 12/12
-2. Add comments - 12/12
