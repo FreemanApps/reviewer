@@ -1,16 +1,19 @@
-<section>
-    <h2>User Details</h2>
-    <form hx-patch="/person/me" hx-target="closest section" hx-swap="outerHTML" hx-disabled-elt="fieldset, button">
-        <fieldset>
-            <label>
-                Username
-                <input type="text" name="person_name" value="{{ current_person_details['person_name'] | e }}" autocomplete="username"/>
-            </label>
-            <label>
-                Email Address
-                <input type="text" name="email_address" value="{{ current_person_details['email_address'] | e }}" autocomplete="email"/>
-            </label>
-            <button type="submit" class="primary">Save</button>
-        </fieldset>
-    </form>
-</section>
+<form hx-patch="/person/me" hx-target="closest section" hx-swap="outerHTML" hx-disabled-elt="fieldset, button" id="edit-user-details-form">
+    <fieldset>
+        <label>
+            Username
+            <input type="text" name="person_name" autocomplete="username"{% if form_data %} value="{{ form_data['person_name'] | e }}"{% else %} value="{{ current_person_details['person_name'] | e }}"{% endif %}{% if error and error["person_name"] %} aria-describedby="person-name-invalid-helper" aria-invalid="true"{% endif %}/>
+            {% if error and error["person_name"] %}
+                <small id="person-name-invalid-helper">{{ error["person_name"] }}</small>
+            {% endif %}
+        </label>
+        <label>
+            Email Address
+            <input type="text" name="email_address"  autocomplete="email"{% if form_data %} value="{{ form_data['email_address'] | e }}"{% else %} value="{{ current_person_details['email_address'] | e }}"{% endif %}{% if error and error["email_address"] %} aria-describedby="email-address-invalid-helper" aria-invalid="true"{% endif %}/>
+            {% if error and error["email_address"] %}
+                <small id="email-address-invalid-helper">{{ error["email_address"] }}</small>
+            {% endif %}
+        </label>
+        <button type="submit" class="primary">Save</button>
+    </fieldset>
+</form>

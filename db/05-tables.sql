@@ -34,7 +34,7 @@ CREATE TABLE reviewer.person (
 
 CREATE TABLE reviewer.review (
     review_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    review_score INTEGER CHECK (review_score >= 0 AND review_score <= 10),
+    review_score INTEGER CHECK (review_score >= 1 AND review_score <= 10),
     review_content TEXT,
     review_timestamp TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     person_id INTEGER NOT NULL REFERENCES person(person_id) ON UPDATE CASCADE ON DELETE CASCADE,

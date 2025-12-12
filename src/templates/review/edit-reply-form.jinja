@@ -1,6 +1,9 @@
-<form hx-patch="{{ url_for('update_reply', movie_id=movie_id, review_id=review_id, reply_id=reply_id) }}" hx-target="closest section" hx-swap="outerHTML" hx-disabled-elt="fieldset, button">
-    <fieldset role="group">
-        <textarea name="reply_content">{{ reply_details["reply_content"] | e }}</textarea>
+<form hx-patch="{{ url_for('update_reply', movie_id=movie_id, review_id=review_id, reply_id=reply_id) }}" hx-target="closest section" hx-swap="outerHTML" hx-disabled-elt="fieldset, button" id="edit-reply-{{reply_id}}-form">
+    <fieldset>
+        <textarea name="reply_content"{% if error %} aria-describedby="reply-{{ reply_id }}-invalid-helper" aria-invalid="true"{% endif %}>{% if form_data %}{{ form_data['reply_content'] | e }}{% else %}{{ reply_details["reply_content"] | e }}{% endif %}</textarea>
+        {% if error %}
+            <small id="reply-{{ reply_id }}-invalid-helper">{{ error["reply_content"] }}</small>
+        {% endif %}
         <button type="submit" class="primary">Save</button>
     </fieldset>
 </form>

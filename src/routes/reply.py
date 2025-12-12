@@ -17,6 +17,15 @@ router = APIRouter()
 async def create_reply(request: Request, movie_id: int, review_id: int, form_data: Annotated[ReplyFormData, Form()], current_person_id: Annotated[int, Depends(shared.get_current_person)]):
     reply_content = form_data.reply_content
 
+    error = {}
+    if not reply_content:
+        error["reply_content"] = "Reply must be inputted"
+
+    if len(error) > 0:
+        response = shared.templates.TemplateResponse(request=request, name="review/new-reply-form.jinja", context={"current_person_id": current_person_id, "movie_id": movie_id, "review_id": review_id, "form_data": form_data, "error": error})
+        response.headers["HX-Retarget"] = "#new-reply-form"
+        return response
+
     with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
         with conn.cursor() as cur:
             with conn.transaction():
@@ -53,6 +62,15 @@ async def get_editable_reply(request: Request, movie_id: int, review_id: int, re
 @router.patch("/movie/{movie_id}/review/{review_id}/reply/{reply_id}", response_class=HTMLResponse)
 async def update_reply(request: Request, movie_id: int, review_id: int, reply_id: int, form_data: Annotated[ReplyFormData, Form()], current_person_id: Annotated[int, Depends(shared.get_current_person)]):
     reply_content = form_data.reply_content
+
+    error = {}
+    if not reply_content:
+        error["reply_content"] = "Reply must be inputted"
+
+    if len(error) > 0:
+        response = shared.templates.TemplateResponse(request=request, name="review/edit-reply-form.jinja", context={"current_person_id": current_person_id, "movie_id": movie_id, "review_id": review_id, "reply_id": reply_id, "form_data": form_data, "error": error})
+        response.headers["HX-Retarget"] = "#edit-reply-" + str(reply_id) + "-form"
+        return response
 
     with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
         with conn.cursor() as cur:

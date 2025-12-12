@@ -1,0 +1,9 @@
+<form hx-post="{{ url_for('create_reply', movie_id=movie_id, review_id=review_id) }}" hx-target="closest section" hx-swap="outerHTML" hx-disabled-elt="fieldset, button" id="new-reply-form">
+    <fieldset>
+        <textarea name="reply_content" placeholder="Add a reply"{% if error %} aria-describedby="new-reply-invalid-helper" aria-invalid="true"{% endif %}>{% if form_data %}{{ form_data['reply_content'] | e }}{% endif %}</textarea>
+        {% if error %}
+            <small id="new-reply-invalid-helper">{{ error["reply_content"] }}</small>
+        {% endif %}
+        <button type="submit" class="primary">Add</button>
+    </fieldset>
+</form>

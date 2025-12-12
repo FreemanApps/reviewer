@@ -5,6 +5,7 @@ from typing import Annotated
 import psycopg
 from psycopg.rows import dict_row
 from fastapi.exceptions import HTTPException
+from email_validator import validate_email
 
 from ..services import shared
 
@@ -82,6 +83,19 @@ async def get_editable_current_person(request: Request, current_person_id: Annot
 async def update_current_person(request: Request, form_data: Annotated[EditPersonFormData, Form()], current_person_id: Annotated[int, Depends(shared.get_current_person)]):
     person_name = form_data.person_name
     email_address = form_data.email_address
+
+    error = {}
+    if not person_name:
+        error["person_name"] = "Username must be inputted"
+    try:
+        validate_email(email_address, test_environment=True)
+    except:
+        error["email_address"] = "Email address must be valid"
+
+    if len(error) > 0:
+        response = shared.templates.TemplateResponse(request=request, name="settings/edit-user-details-form.jinja", context={"current_person_id": current_person_id, "form_data": form_data, "error": error})
+        response.headers["HX-Retarget"] = "#edit-user-details-form"
+        return response
     
     with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
         with conn.cursor(row_factory=dict_row) as cur:

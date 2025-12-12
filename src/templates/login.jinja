@@ -4,10 +4,10 @@
     <h1>Login</h1>
     <form hx-post="{{ url_for('login') }}" hx-target="body" hx-push-url="true" hx-disabled-elt="fieldset, button">
         <fieldset>
-            <input type="text" name="email_address" placeholder="Email" aria-label="Email" autocomplete="email"{% if form_data %} value="{{ form_data['email_address'] }}"{% endif %}{% if error %} aria-describedby="invalid-helper" aria-invalid="true"{% endif %}/>
-            <input type="password" name="password" placeholder="Password" aria-label="Password" autocomplete="current-password"{% if form_data %} value="{{ form_data['password'] }}"{% endif %}{% if error %} aria-describedby="invalid-helper" aria-invalid="true"{% endif %}/>
-            {% if error %}
-                <small id="invalid-helper">{{ error }}</small>
+            <input type="text" name="email_address" placeholder="Email" aria-label="Email" autocomplete="email"{% if form_data %} value="{{ form_data['email_address'] | e }}"{% endif %}{% if error and error["form"] %} aria-describedby="invalid-helper" aria-invalid="true"{% endif %}/>
+            <input type="password" name="password" placeholder="Password" aria-label="Password" autocomplete="current-password"{% if form_data %} value="{{ form_data['password'] | e }}"{% endif %}{% if error and error["form"] %} aria-describedby="invalid-helper" aria-invalid="true"{% endif %}/>
+            {% if error and error["form"] %}
+                <small id="invalid-helper">{{ error["form"] }}</small>
             {% endif %}
             <button type="submit" class="primary">Login</button>
         </fieldset>

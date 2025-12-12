@@ -25,10 +25,5 @@
         </footer>
     </article>
     {% endfor %}
-    <form hx-post="{{ url_for('create_reply', movie_id=movie_id, review_id=review_id) }}" hx-target="closest section" hx-swap="outerHTML" hx-disabled-elt="fieldset, button">
-        <fieldset role="group">
-            <textarea name="reply_content" placeholder="Add a reply"></textarea>
-            <button type="submit" class="primary">Add</button>
-        </fieldset>
-    </form>
+    {% include 'review/new-reply-form.jinja' %}
 </section>

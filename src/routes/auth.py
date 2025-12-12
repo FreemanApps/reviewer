@@ -52,7 +52,8 @@ async def login(request: Request, response: Response, form_data: Annotated[Login
         return response
     # otherwise, respond back with error details included
     except:
-        error = 'Login details are invalid'
+        error = {}
+        error["form"] = 'Login details must be valid'
         return shared.templates.TemplateResponse(request=request, name="login.jinja", context={"form_data": form_data, "error":error})
 
 @router.get("/logout")

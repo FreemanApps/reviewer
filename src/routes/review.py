@@ -9,7 +9,7 @@ from fastapi.exceptions import HTTPException
 from ..services import shared
 
 class ReviewFormData(BaseModel):
-    review_score: int
+    review_score: str
     review_content: str
 
 router = APIRouter()
@@ -20,8 +20,19 @@ async def get_new_review_form(request: Request, movie_id: int, current_person_id
 
 @router.post("/movie/{movie_id}/review")
 async def create_review(request: Request, movie_id: int, form_data: Annotated[ReviewFormData, Form()], current_person_id: Annotated[int, Depends(shared.get_current_person)]):
-    review_content = form_data.review_content
-    review_score = form_data.review_score
+    review_content = form_data.review_content if form_data.review_content else None
+    review_score = form_data.review_score if form_data.review_score else None
+
+    error = {}
+    if not review_content and not review_score:
+        error["form"] = "Review or score must be inputted"
+    elif review_score:
+        try:
+            review_score = int(review_score)
+            if review_score < 1 or review_score > 10:
+                error["review_score"] = "Review score must be between 1 and 10"
+        except:
+            error["review_score"] = "Review score must be a number"
 
     with psycopg.connect(shared.database_url, cursor_factory=shared.LoggingCursor) as conn:
         with conn.cursor() as cur:
