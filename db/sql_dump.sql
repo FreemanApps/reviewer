@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict IkcKeWLbRZcHlHSUmVT80WLWJGEzbdXGMCNVTy8d78CThZ6qMWKMD2tjEQda2fv
+\restrict 9XGyodjbUIjc9ZHg5kwwX3Z5DHTTwW1g6RuSmV3j7JEufqRRlfcXRl7AAFSIGKF
 
 -- Dumped from database version 17.6
 -- Dumped by pg_dump version 17.6
@@ -78,54 +78,103 @@ CREATE TYPE reviewer.statistic_type AS ENUM (
 CREATE PROCEDURE reviewer.generate_person_statistics(IN p_person_id integer)
     LANGUAGE sql
     AS $$
+
     DELETE FROM reviewer.statistic
+
     WHERE person_id = p_person_id;
 
+
+
     -- most viewed director
+
     INSERT INTO reviewer.statistic (statistic_name, statistic_type, person_id, worker_id)
+
     SELECT 'most_reviewed_director', 'worker', p_person_id, worker_id FROM (
+
         SELECT mw.worker_id, COUNT(*) AS num_reviewed
+
         FROM reviewer.review r
+
         LEFT OUTER JOIN reviewer.movie m ON r.movie_id = m.movie_id
+
         LEFT OUTER JOIN reviewer.movie_worker_bridge mw ON m.movie_id = mw.movie_id
+
         WHERE r.person_id = p_person_id
+
         AND mw.movie_worker_position = 'director'
+
         GROUP BY mw.worker_id
+
         ORDER BY num_reviewed DESC, mw.worker_id
+
         LIMIT 1
+
     );
+
+
 
     -- highest rated director
+
     INSERT INTO reviewer.statistic (statistic_name, statistic_type, person_id, worker_id)
+
     SELECT 'highest_rated_director', 'worker', p_person_id, worker_id FROM (
+
         SELECT mw.worker_id, AVG(r.review_score) AS average_rating
+
         FROM reviewer.review r
+
         LEFT OUTER JOIN reviewer.movie m ON r.movie_id = m.movie_id
+
         LEFT OUTER JOIN reviewer.movie_worker_bridge mw ON m.movie_id = mw.movie_id
+
         WHERE r.person_id = p_person_id
+
         AND mw.movie_worker_position = 'director'
+
         GROUP BY mw.worker_id
+
         ORDER BY average_rating DESC, mw.worker_id
+
         LIMIT 1
+
     );
 
+
+
     -- most controversial review
+
     INSERT INTO reviewer.statistic (statistic_name, statistic_type, person_id, review_id)
+
     SELECT 'most_controversial_review', 'review', p_person_id, review_id FROM (
+
         SELECT review_id, total / GREATEST(ABS(likes - dislikes), 1) AS controversial FROM (
+
             SELECT
+
             r.review_id
+
             ,COUNT(*) total
+
             ,COUNT(*) FILTER (WHERE rr.review_reaction_type = 'like') likes
+
             ,COUNT(*) FILTER (WHERE rr.review_reaction_type = 'dislike') dislikes
+
             FROM reviewer.review r
+
             LEFT OUTER JOIN reviewer.review_reaction rr ON r.review_id = rr.review_id
+
             WHERE r.person_id = p_person_id
+
             GROUP BY r.review_id
+
         )
+
         ORDER BY controversial DESC, review_id
+
         LIMIT 1
+
     );
+
 $$;
 
 
@@ -136,13 +185,21 @@ $$;
 CREATE FUNCTION reviewer.reply_with_reaction_type(p_reply_reaction_type reviewer.reaction_type, p_current_person_id integer) RETURNS TABLE(reply_id integer, has_reacted integer, reaction_count integer)
     LANGUAGE sql
     AS $$
+
     SELECT
+
     r.reply_id
+
     ,COUNT(*) FILTER (WHERE rr.reply_reaction_type = p_reply_reaction_type AND rr.person_id = p_current_person_id) has_reacted
+
     ,COUNT(*) FILTER (WHERE rr.reply_reaction_type = p_reply_reaction_type) reaction_count
+
     FROM reviewer.reply r
+
     LEFT OUTER JOIN reviewer.reply_reaction rr ON r.reply_id = rr.reply_id
+
     GROUP BY r.reply_id
+
 $$;
 
 
@@ -153,23 +210,41 @@ $$;
 CREATE FUNCTION reviewer.reply_with_reactions(p_current_person_id integer) RETURNS TABLE(reply_id integer, reply_content text, reply_timestamp timestamp with time zone, reply_date text, person_id integer, person_name text, review_id integer, has_liked integer, likes integer, has_disliked integer, dislikes integer)
     LANGUAGE sql
     AS $$
+
     SELECT
+
     r.reply_id
+
     ,r.reply_content
+
     ,r.reply_timestamp
+
     ,TO_CHAR(r.reply_timestamp AT TIME ZONE 'America/New_York', 'DD Mon YYYY') AS reply_date
+
     ,p.person_id
+
     ,p.person_name
+
     ,r.review_id
+
     ,l.has_reacted AS has_liked
+
     ,l.reaction_count AS likes
+
     ,d.has_reacted AS has_disliked
+
     ,d.reaction_count AS dislikes
+
     FROM reviewer.reply r
+
     JOIN reviewer.person p ON r.person_id = p.person_id
+
     LEFT OUTER JOIN reviewer.reply_with_reaction_type('like', p_current_person_id) l ON r.reply_id = l.reply_id
+
     LEFT OUTER JOIN reviewer.reply_with_reaction_type('dislike', p_current_person_id) d ON r.reply_id = d.reply_id
+
     GROUP BY r.reply_id, p.person_id, l.has_reacted, l.reaction_count, d.has_reacted, d.reaction_count
+
 $$;
 
 
@@ -180,13 +255,21 @@ $$;
 CREATE FUNCTION reviewer.review_with_reaction_type(p_review_reaction_type reviewer.reaction_type, p_current_person_id integer) RETURNS TABLE(review_id integer, has_reacted integer, reaction_count integer)
     LANGUAGE sql
     AS $$
+
     SELECT
+
     r.review_id
+
     ,COUNT(*) FILTER (WHERE rr.review_reaction_type = p_review_reaction_type AND rr.person_id = p_current_person_id) has_reacted
+
     ,COUNT(*) FILTER (WHERE rr.review_reaction_type = p_review_reaction_type) reaction_count
+
     FROM reviewer.review r
+
     LEFT OUTER JOIN reviewer.review_reaction rr ON r.review_id = rr.review_id
+
     GROUP BY r.review_id
+
 $$;
 
 
@@ -197,22 +280,39 @@ $$;
 CREATE FUNCTION reviewer.review_with_reactions(p_current_person_id integer) RETURNS TABLE(review_id integer, review_score integer, review_content text, review_date text, person_id integer, person_name text, has_liked integer, likes integer, has_disliked integer, dislikes integer)
     LANGUAGE sql
     AS $$
+
     SELECT
+
     r.review_id
+
     ,r.review_score
+
     ,r.review_content
+
     ,TO_CHAR(r.review_timestamp AT TIME ZONE 'America/New_York', 'DD Mon YYYY') AS review_date
+
     ,p.person_id
+
     ,p.person_name
+
     ,l.has_reacted AS has_liked
+
     ,l.reaction_count AS likes
+
     ,d.has_reacted AS has_disliked
+
     ,d.reaction_count AS dislikes
+
     FROM reviewer.review r
+
     JOIN reviewer.person p ON r.person_id = p.person_id
+
     LEFT OUTER JOIN reviewer.review_with_reaction_type('like', p_current_person_id) l ON r.review_id = l.review_id
+
     LEFT OUTER JOIN reviewer.review_with_reaction_type('dislike', p_current_person_id) d ON r.review_id = d.review_id
+
     GROUP BY r.review_id, p.person_id, l.has_reacted, l.reaction_count, d.has_reacted, d.reaction_count
+
 $$;
 
 
@@ -412,7 +512,7 @@ CREATE TABLE reviewer.review (
     person_id integer NOT NULL,
     movie_id integer NOT NULL,
     CONSTRAINT review_check CHECK (((review_score IS NOT NULL) OR (review_content IS NOT NULL))),
-    CONSTRAINT review_review_score_check CHECK (((review_score >= 0) AND (review_score <= 10)))
+    CONSTRAINT review_review_score_check CHECK (((review_score >= 1) AND (review_score <= 10)))
 );
 
 
@@ -746,10 +846,10 @@ COPY reviewer.person (person_id, person_name, email_address, hashed_password) FR
 --
 
 COPY reviewer.reply (reply_id, reply_content, reply_timestamp, person_id, review_id) FROM stdin;
-1	Wow, you have a bad taste in movies	2025-12-09 21:21:46.803288-05	3	2
-2	Who are you?	2025-12-09 22:21:46.803288-05	4	2
-3	Black Dog is an awful person	2025-12-09 23:21:46.803288-05	1	2
-4	Yeah, I thought this was the best as well!	2025-12-10 00:21:46.803288-05	3	4
+1	Wow, you have a bad taste in movies	2025-12-11 18:02:06.663857-05	3	2
+2	Who are you?	2025-12-11 19:02:06.663857-05	4	2
+3	Black Dog is an awful person	2025-12-11 20:02:06.663857-05	1	2
+4	Yeah, I thought this was the best as well!	2025-12-11 21:02:06.663857-05	3	4
 \.
 
 
@@ -758,13 +858,13 @@ COPY reviewer.reply (reply_id, reply_content, reply_timestamp, person_id, review
 --
 
 COPY reviewer.reply_reaction (reply_reaction_id, reply_reaction_type, person_id, reply_id) FROM stdin;
-2	dislike	2	1
-3	dislike	2	2
-4	dislike	2	3
-5	like	1	1
-6	like	1	2
-7	like	4	1
-8	like	3	2
+1	dislike	2	1
+2	dislike	2	2
+3	dislike	2	3
+4	like	1	1
+5	like	1	2
+6	like	4	1
+7	like	3	2
 \.
 
 
@@ -773,10 +873,10 @@ COPY reviewer.reply_reaction (reply_reaction_id, reply_reaction_type, person_id,
 --
 
 COPY reviewer.review (review_id, review_score, review_content, review_timestamp, person_id, movie_id) FROM stdin;
-1	8	Pretty good!	2025-12-07 20:21:46.803288-05	1	4
-2	3	Absolutely awful...	2025-12-08 20:21:46.803288-05	2	1
-3	7	Solid. I had a fun time	2025-12-08 21:21:46.803288-05	2	2
-4	10	Amazing! Best movie of the year	2025-12-09 08:21:46.803288-05	4	1
+1	8	Pretty good!	2025-12-09 17:02:06.663857-05	1	4
+2	3	Absolutely awful...	2025-12-10 17:02:06.663857-05	2	1
+3	7	Solid. I had a fun time	2025-12-10 18:02:06.663857-05	2	2
+4	10	Amazing! Best movie of the year	2025-12-11 05:02:06.663857-05	4	1
 \.
 
 
@@ -876,7 +976,7 @@ SELECT pg_catalog.setval('reviewer.person_person_id_seq', 4, true);
 -- Name: reply_reaction_reply_reaction_id_seq; Type: SEQUENCE SET; Schema: reviewer; Owner: -
 --
 
-SELECT pg_catalog.setval('reviewer.reply_reaction_reply_reaction_id_seq', 8, true);
+SELECT pg_catalog.setval('reviewer.reply_reaction_reply_reaction_id_seq', 7, true);
 
 
 --
@@ -1271,5 +1371,5 @@ GRANT SELECT ON TABLE reviewer.statistic_with_object TO reviewer_user;
 -- PostgreSQL database dump complete
 --
 
-\unrestrict IkcKeWLbRZcHlHSUmVT80WLWJGEzbdXGMCNVTy8d78CThZ6qMWKMD2tjEQda2fv
+\unrestrict 9XGyodjbUIjc9ZHg5kwwX3Z5DHTTwW1g6RuSmV3j7JEufqRRlfcXRl7AAFSIGKF
 
