@@ -31,8 +31,10 @@ templates = Jinja2Templates(directory="src/templates", autoescape=False)
 
 # set up security dependency
 async def get_current_person(token: Annotated[str, Cookie()] = None, hx_request: Annotated[str | None, Header()] = None):
+    # attempt to decode token cookie
     try:
         payload = jwt.decode(token, jwt_secret_key, algorithms=[jwt_algorithm])
+    # if not able to, then send to login page
     except:
         if hx_request:
             raise HTTPException(
@@ -45,7 +47,9 @@ async def get_current_person(token: Annotated[str, Cookie()] = None, hx_request:
                 headers={'Location': '/login'}
             )
 
+    # get current person id from token
     current_person_id = int(payload["sub"])
+    # if not able to, then send to login page
     if not current_person_id:
         if hx_request:
             raise HTTPException(
@@ -57,5 +61,6 @@ async def get_current_person(token: Annotated[str, Cookie()] = None, hx_request:
                 status_code=status.HTTP_303_SEE_OTHER,
                 headers={'Location': '/login'}
             )
+    # otherwise, return current person id
     else:
         return current_person_id

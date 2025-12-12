@@ -18,7 +18,7 @@ app.mount("/public", StaticFiles(directory="src/public"), name="public")
 def get_icon():
     return "/public/favicon.ico"
 
-# add custom exception handlers
+# add custom exception handler for RequestValidationError (ie 422 errors)
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     if request.headers.get('hx-request'):
@@ -29,6 +29,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         return await http_exception_handler(request, error)
     return shared.templates.TemplateResponse(request=request, name="error/422.jinja", status_code=status.HTTP_422_UNPROCESSABLE_CONTENT)
 
+# add custom exception handler for 404 errors
 @app.exception_handler(status.HTTP_404_NOT_FOUND)
 async def not_found_exception_handler(request: Request, exc: HTTPException):
     if request.headers.get('hx-request'):
@@ -39,6 +40,7 @@ async def not_found_exception_handler(request: Request, exc: HTTPException):
         return await http_exception_handler(request, error)
     return shared.templates.TemplateResponse(request=request, name="error/404.jinja", status_code=status.HTTP_404_NOT_FOUND)
 
+# add custom exception handler for 500 errors
 @app.exception_handler(status.HTTP_500_INTERNAL_SERVER_ERROR)
 async def internal_server_error_exception_handler(request: Request, exc: HTTPException):
     if request.headers.get('hx-request'):

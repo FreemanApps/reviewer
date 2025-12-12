@@ -1,2 +1,2 @@
 1. Add form error handling for patch on person, post and patch on reply and post and patch on review - 12/11
-2. Add comments and README.md
+2. Add comments

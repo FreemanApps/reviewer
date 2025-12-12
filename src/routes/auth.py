@@ -29,10 +29,11 @@ async def login(request: Request, response: Response, form_data: Annotated[Login
             cur.execute('''
                             SELECT person_id, hashed_password
                             FROM reviewer.person
-                            WHERE email_address = %s
+                            WHERE UPPER(email_address) = UPPER(%s)
                         ''', (form_data.email_address,))
             current_person_details = cur.fetchone()
 
+    # attempt to verify input password against hashed password
     try:
         verify = password_hash.verify(form_data.password, current_person_details["hashed_password"])
         if not verify:
@@ -44,16 +45,19 @@ async def login(request: Request, response: Response, form_data: Annotated[Login
         }
         token = jwt.encode(payload, shared.jwt_secret_key, algorithm=shared.jwt_algorithm)
 
+        ## if verified, send to home page with token cookie 
         url = request.url_for("get_movies")
         response = RedirectResponse(url, status.HTTP_303_SEE_OTHER)
         response.set_cookie(key="token", value=token)
         return response
+    # otherwise, respond back with error details included
     except:
         error = 'Login details are invalid'
         return shared.templates.TemplateResponse(request=request, name="login.jinja", context={"form_data": form_data, "error":error})
 
 @router.get("/logout")
 async def logout(request: Request, response: Response):
+    # send to home page with with no token cookie
     url = request.url_for("get_movies")
     response = RedirectResponse(url, status.HTTP_303_SEE_OTHER)
     response.delete_cookie(key="token")
